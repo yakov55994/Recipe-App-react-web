@@ -7,10 +7,23 @@ const recipeSchema = new mongoose.Schema({
     preparationTime: { type: Number, required: true },
     cookingTime: { type: Number, required: true },
     servings: { type: Number, required: true },
-    difficulty: { 
-        type: String, 
+    imageUrl: { type: String, required: true },
+    difficulty: {
+        type: String,
         required: true,
         enum: ['Easy', 'Medium', 'Hard']
+    },
+    categories: {
+        mainCategory: {
+            type: String,
+            required: true,
+            enum: ['Dairy', 'Fur', 'Meat'] // קטגוריות ראשיות
+        },
+        subCategory: {
+            type: String,
+            required: true,
+            enum: ['Dishes', 'Desserts', 'Soups'] // תתי-קטגוריות
+        }
     },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }

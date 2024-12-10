@@ -26,7 +26,7 @@ const RecipeService = {
             throw error;
         }
     },
-    deleteRecipe: async (recipeId) => {
+    deletedRecipe: async (recipeId) => {
         try {
             const deletedRecipe = await recipeModel.findByIdAndDelete(recipeId);
             if (!deletedRecipe) {

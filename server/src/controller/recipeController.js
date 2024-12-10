@@ -1,15 +1,27 @@
 import recipeService from '../services/recipeService.js';
-
+import Recipe from '../models/recipeModel.js';
 const recipeController = {
     
     createRecipe: async (req, res) => {
-        
+        const { title, ingredients, instructions,preparationTime,cookingTime,servings,imageUrl,difficulty,categories  } = req.body;
+        const newRecipe = new Recipe({
+            title,
+            ingredients,
+            instructions,
+            preparationTime,
+            cookingTime,
+            servings,
+            imageUrl,
+            difficulty,
+            categories
+        })
+
         try {
-            const newRecipe = await recipeService.createRecipe(req.body);
+            await newRecipe.save();        
             res.status(201).json(newRecipe);
         } catch (error) {
             console.error(error);
-            res.status(400).json({ message: 'Invalid request' });
+            res.status(500).json({ error: error.message });
         }
     },
     updateRecipe: async (req, res) => {
@@ -23,7 +35,7 @@ const recipeController = {
     },
     deleteRecipe: async (req, res) => {
         try {
-            await recipeService.delete(req.params.id);
+            await recipeService.deletedRecipe(req.params.id);
             res.json({ message: 'Recipe deleted successfully' });
         } catch (error) {
             console.error(error);
