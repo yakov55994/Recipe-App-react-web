@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NavBar = () => {
+
+  const user = localStorage.getItem('user');
+  const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -10,10 +16,7 @@ const NavBar = () => {
   };
 
   const handleMouseLeave = (menu) => {
-    // Delay before closing the menu to avoid premature closing
-    setTimeout(() => {
-      setOpenMenu((current) => (current === menu ? null : current));
-    }, 200);
+    setOpenMenu((current) => (current === menu ? null : current));
   };
 
   const handleMouseStay = () => {
@@ -23,6 +26,36 @@ const NavBar = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  const handleMoveToAuth = () => {
+    if (user && user !== 'null') {
+      toast.error("את/ה כבר מחובר/ת");
+      navigate("/");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleMoveToRegister = () => {
+    if (user) {
+      toast.error("את/ה כבר מחובר/ת");
+      navigate("/");
+      return;
+    }
+    else {
+      navigate("/signup");
+    }
+  };
+
+  const handleLogOut = () => {
+    if(user){
+      localStorage.removeItem('user');
+      toast.success("התנתקת בהצלחה")
+      navigate("/");
+    }else{
+      return;
+    }
+  }
 
   return (
     <nav className="bg-gray-800" dir="rtl">
@@ -67,12 +100,71 @@ const NavBar = () => {
             {/* Main navigation */}
             <div className="hidden sm:flex space-x-4">
               {/* Home Link */}
+              <h3 className='text-black bg-amber-200 rounded h-7 w-9'>בס"ד</h3>
+
               <Link
                 to="/Home"
-                className="rounded-md px-3 py-2 text-sm font-medium text-white"
+                className="rounded-md px-3 py-0.5 text-sm font-medium text-white"
                 aria-current="page"
               >
-                בית
+                🏠 בית 
+              </Link>
+
+              {/* Auth Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => handleMouseEnter('auth')}
+                onMouseLeave={() => handleMouseLeave('auth')}
+              >
+                <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 text-sm font-medium cursor-pointer">
+                  🔑 התחברות
+                </span>
+                {openMenu === 'auth' && (
+                  <ul
+                    className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-md"
+                    onMouseEnter={handleMouseStay}
+                    onMouseLeave={() => handleMouseLeave('auth')}
+                  >
+                    <li>
+                      <button
+                        onClick={handleMoveToRegister}
+                        className="flex items-center px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 w-full text-left"
+                      >
+                      💻  הרשמה
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleMoveToAuth}
+                        className="flex items-center px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 w-full text-left"
+                      >
+                      🔓  התחברות
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleLogOut}
+                        className="flex items-center px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 w-full text-left"
+                      >
+                      🔐  התנתקות
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </div>
+              <Link
+                to="/PersonalArea"
+                className="rounded-md px-3 py-0.5 text-sm font-medium text-white"
+                aria-current="page"
+              >
+               🧍  איזור אישי
+              </Link>
+              <Link
+                to="/CreateRecipe"
+                className=" items-center text-white"
+                aria-current="page"
+              >
+               ⌨️ יצירת מתכון
               </Link>
 
               {/* Dairy Dropdown */}
@@ -82,7 +174,7 @@ const NavBar = () => {
                 onMouseLeave={() => handleMouseLeave('dairy')}
               >
                 <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 text-sm font-medium cursor-pointer">
-                  מתכונים חלביים
+                 🍕 מתכונים חלביים
                 </span>
                 {openMenu === 'dairy' && (
                   <ul
@@ -95,7 +187,7 @@ const NavBar = () => {
                         to="/DairyDesserts"
                         className="block px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
-                        קינוחים
+                      🍨  קינוחים
                       </Link>
                     </li>
                     <li>
@@ -103,7 +195,7 @@ const NavBar = () => {
                         to="/DairyDishes"
                         className="block px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
-                        מנות
+                     🍳   מנות
                       </Link>
                     </li>
                   </ul>
@@ -117,7 +209,7 @@ const NavBar = () => {
                 onMouseLeave={() => handleMouseLeave('fur')}
               >
                 <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 text-sm font-medium cursor-pointer">
-                מתכונים פרווה
+                🥙  מתכונים פרווה
                 </span>
                 {openMenu === 'fur' && (
                   <ul
@@ -130,7 +222,7 @@ const NavBar = () => {
                         to="/FurDishes"
                         className="block px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
-                        מנות
+                      🐟  מנות
                       </Link>
                     </li>
                     <li>
@@ -138,7 +230,7 @@ const NavBar = () => {
                         to="/FurSoups"
                         className="block px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
-                        מרקים
+                      🍜  מרקים
                       </Link>
                     </li>
                     <li>
@@ -146,7 +238,7 @@ const NavBar = () => {
                         to="/FurDesserts"
                         className="block px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
-                        קינוחים
+                      🍦  קינוחים
                       </Link>
                     </li>
                   </ul>
@@ -160,20 +252,20 @@ const NavBar = () => {
                 onMouseLeave={() => handleMouseLeave('meat')}
               >
                 <span className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 text-sm font-medium cursor-pointer">
-                מתכונים בשריים
+                🍖  מתכונים בשריים
                 </span>
                 {openMenu === 'meat' && (
                   <ul
                     className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-md"
                     onMouseEnter={handleMouseStay}
-                    onMouseLeave={() => handleMouseLeave('fur')}
+                    onMouseLeave={() => handleMouseLeave('meat')}
                   >
                     <li>
                       <Link
                         to="/MeatDishes"
                         className="block px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
-                        מנות
+                      🍔  מנות
                       </Link>
                     </li>
                     <li>
@@ -181,10 +273,9 @@ const NavBar = () => {
                         to="/MeatSoups"
                         className="block px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
-                        מרקים
+                      🍜  מרקים
                       </Link>
                     </li>
-                
                   </ul>
                 )}
               </div>

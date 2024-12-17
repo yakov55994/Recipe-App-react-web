@@ -1,9 +1,10 @@
+// models/Recipe.js
 import mongoose from 'mongoose';
 
 const recipeSchema = new mongoose.Schema({
     title: { type: String, required: true },
-    ingredients: [{ type: String, required: true }],
-    instructions: [{ type: String, required: true }],
+    ingredients: { type: [String], required: true },
+    instructions: { type: [String], required: true },
     preparationTime: { type: Number, required: true },
     cookingTime: { type: Number, required: true },
     servings: { type: Number, required: true },
@@ -26,7 +27,12 @@ const recipeSchema = new mongoose.Schema({
         }
     },
     createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+    updatedAt: { type: Date, default: Date.now },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Reference to the User model
+        required: true
+    }
 });
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
