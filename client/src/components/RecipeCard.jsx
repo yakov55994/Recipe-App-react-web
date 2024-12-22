@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { API_SERVER_URL } from "../api/api.js";
 import axios from "axios";
+import { useNavigate, useParams  } from "react-router-dom";
 
 const RecipeCard = ({ mainCategory, subCategory }) => {
+
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [loading, setLoading] = useState(true); // סטייט טעינה
+  const navigate = useNavigate();
+  const { category } = useParams();
 
   useEffect(() => {
     const fetchRecipes = async () => {
       setLoading(true); // התחלת טעינה
       try {
-        const response = await axios.get(`${API_SERVER_URL}/recipe/`);
+        const response = await axios.get(`${API_SERVER_URL}/recipe/`,
+          headers {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // שליחה עם טוקן אם יש
+          },
+        );
         const recipes = response.data;
 
         // סינון המתכונים
@@ -48,6 +56,10 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
       </h1>
     );
   }
+  const MoveToDetails = (recipe) => {
+    navigate(`/${category}/RecipeDetails/${recipe._id}`);
+  }
+  
 
   // הצגת כרטיסי המתכונים
   return (
@@ -62,18 +74,13 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
               className="rounded-t-lg w-full h-48 object-cover"
               src={recipe.imageUrl}
               alt={recipe.title}
+              onClick={() => MoveToDetails(recipe)}
             />
           </a>
           <div className="p-5">
             <h5 className="mb-2 text-2xl font-bold">{recipe.title}</h5>
             <p>
-              <b>מרכיבים:</b> {recipe.ingredients.join(", ")}
-            </p>
-            <p>
-              <b>נוצר על ידי:</b> {recipe.user.username}
-            </p>
-            <p>
-              <b>הוראות הכנה:</b> {recipe.instructions.join(", ")}
+              {recipe.description}
             </p>
           </div>
         </div>

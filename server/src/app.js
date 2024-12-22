@@ -5,6 +5,7 @@ import cors from 'cors';
 
 import recipeRoute from './routes/recipeRouter.js';
 import UserRouter from './routes/UserRouter.js'
+import SearchRouter from './routes/SearchRouter.js'
 dotenv.config();
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/api/recipe", recipeRoute);
 app.use("/api/user",UserRouter );
+app.use("/api/search",SearchRouter );
 
 
     (async () => {

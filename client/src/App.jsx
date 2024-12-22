@@ -16,29 +16,37 @@ import { ToastContainer } from 'react-toastify';
 import PersonalArea from "./pages/PersonalArea.jsx";
 import CreateRecipe from "./pages/CreateRecipe.jsx";
 import AllRecipes from "./pages/AllRecipes.jsx";
+import Search from "./pages/Search.jsx";
+import SearchResult from "./pages/SearchResult.jsx";
+import RecipeDetails from "./pages/RecipeDetails.jsx";
 
 export default function App() {
   return (
     <>
-<ToastContainer/>
+      <ToastContainer />
       <AuthProvider>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>          <NavBar />
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <NavBar />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/Home" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/PersonalArea" element={<PersonalArea />} />
-              <Route path="/DairyDishes" element={<DairyDishes />} />
-              <Route path="/FurDishes" element={<FurDishes />} />
-              <Route path="/MeatDishes" element={<MeatDishes />} />
-              <Route path="/FurDesserts" element={<FurDesserts />} />
-              <Route path="/DairyDesserts" element={<DairyDesserts />} />
-              <Route path="/FurSoups" element={<FurSoups />} />
-              <Route path="/MeatSoups" element={<MeatSoups />} />
-              <Route path="/CreateRecipe" element={<CreateRecipe />} />
-              <Route path="/AllRecipes" element={<AllRecipes />} />
+            <Route path="/DairyDishes" element={<DairyDishes />} />
+            <Route path="/FurDishes" element={<FurDishes />} />
+            <Route path="/MeatDishes" element={<MeatDishes />} />
+            <Route path="/FurDesserts" element={<FurDesserts />} />
+            <Route path="/DairyDesserts" element={<DairyDesserts />} />
+            <Route path="/FurSoups" element={<FurSoups />} />
+            <Route path="/MeatSoups" element={<MeatSoups />} />
+            <Route path="/CreateRecipe" element={<CreateRecipe />} />
+            <Route path="/AllRecipes" element={<AllRecipes />} />
             <Route path="/Recipes" element={<Recipes />} />
+            <Route path="/SearchResult" element={<SearchResult />} />
+            <Route path="/:category/RecipeDetails/:id" element={<RecipeDetails />} />
+            <Route path="/RecipeDetails/:id" element={<RecipeDetails />} />
+
           </Routes>
         </BrowserRouter>
       </AuthProvider>

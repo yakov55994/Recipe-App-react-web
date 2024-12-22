@@ -32,7 +32,11 @@ const recipeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', // Reference to the User model
         required: true
-    }
+    },
+    description:{
+        type: String,
+        required: true,
+        maxlength: 100     }
 });
 
 const Recipe = mongoose.model('Recipe', recipeSchema);

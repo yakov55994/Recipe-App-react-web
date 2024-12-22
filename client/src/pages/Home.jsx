@@ -5,8 +5,8 @@ import img4 from '../assets/images/img4_home.png';
 
 const Home = () => {
   return (
-    <div className="relative bg-orange-100">
-      <h1 className="text-center text-6xl mb-6 bg-amber-50 relative z-10 mt-28">מתכוני האוכל המובילים 🍽️</h1>
+    <div>
+      <h1 className="text-center text-6xl ">מתכוני האוכל המובילים 🍽️</h1>
 
       {/* התמונות של המתכונים */}
       <div className="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible relative z-10">

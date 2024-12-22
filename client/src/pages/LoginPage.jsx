@@ -3,28 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_SERVER_URL } from '../api/api.js';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const { login } = useAuth(); // החיבור לקונטקסט
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API_SERVER_URL}/user/login`, { email, password },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      const user = response.data.user._id;
-      toast.success(`התחברת בהצלחה, שלום ${response.data.user.username}`)
-      localStorage.setItem('user', user);
+      const response = await axios.post(`${API_SERVER_URL}/user/login`, { email, password }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      localStorage.setItem('username', response.data.user.username);
+
+      const { user, token } = response.data; // קבלת המשתמש וה-token
+      toast.success(`התחברת בהצלחה, שלום ${user.username}`);
+
+      // עדכון הקונטקסט עם המידע החדש
+      login(user, token);
+
+      // ניווט לעמוד הבית לאחר ההתחברות
       navigate('/home');
     } catch (err) {
       console.error(err);
@@ -33,9 +39,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600 ">
-    <div className="bg-white p-10 rounded-3xl shadow-2xl w-full sm:w-96 transform transition-all duration-500 hover:scale-105 mt-8 mb-8">
-      <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-8">דף התחברות</h2>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600">
+      <div className="bg-white p-10 rounded-3xl shadow-2xl w-full sm:w-96 transform transition-all duration-500 hover:scale-105 mt-8 mb-8">
+        <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-8">דף התחברות</h2>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         <form onSubmit={handleLogin}>
           <div className="mb-6">

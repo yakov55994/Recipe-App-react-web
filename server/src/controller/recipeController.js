@@ -2,7 +2,7 @@ import recipeService from '../services/recipeService.js';
 
 const recipeController = {
     createRecipe: async (req, res) => {
-        const { title, ingredients, instructions, preparationTime, cookingTime, servings, imageUrl, difficulty, categories, user } = req.body;
+        const { title, ingredients, instructions, preparationTime, cookingTime, servings, imageUrl, difficulty, categories, user, description } = req.body;
         const recipeData = {
             title,
             ingredients,
@@ -13,9 +13,10 @@ const recipeController = {
             imageUrl,
             difficulty,
             categories,
-            user
+            description,
+            user: user._id
         };
-        if (!title || !ingredients || !instructions || !cookingTime || !preparationTime || !servings || !imageUrl || !difficulty || !categories || !user)
+        if (!title || !ingredients || !instructions || !cookingTime || !preparationTime || !servings || !imageUrl || !difficulty || !categories || !user || !description)
             return res.status(400).json({ error: "All fields are required" });
         try {
             const newRecipe = await recipeService.createRecipe(recipeData); // הפנייה לסרביס
@@ -25,6 +26,8 @@ const recipeController = {
             console.error(error);
             res.status(500).json({ error: error.message });
         }
+        console.log("recipeData ", recipeData);
+        
     },
     updateRecipe: async (req, res) => {
         try {
@@ -46,7 +49,7 @@ const recipeController = {
     },
     getRecipeById: async (req, res) => {
         try {
-            const recipe = await recipeService.getById(req.params);
+            const recipe = await recipeService.getById(req.params.id);
             if (!recipe) return res.status(404).json({ message: 'Recipe not found' });
             res.json(recipe);
         } catch (error) {
