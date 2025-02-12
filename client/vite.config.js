@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      input: 'client/index.html',  // ודא שהנתיב הזה נכון
+      input: 'index.html',  // ודא שהנתיב הזה נכון
     }
   }
 });
