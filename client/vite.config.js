@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// https://vite.dev/config/
 export default defineConfig({
-  root: './client',  // מציין שהתיקייה שבה נמצא קובץ ה-index.html היא תיקיית client
+  root: './', // מציין את ספריית השורש שבה נמצא קובץ index.html
   plugins: [react()],
   build: {
-    outDir: '../dist',  // תיקיית הפלט תהיה מחוץ לתיקיית client
+    outDir: './dist', // מציין את תיקיית הפלט של הבנייה
   },
-  base: './',
+  base: './', // אם אתה מפרסם בנתיב משנה, שנה את זה לנתיב המתאים
 })
