@@ -1,6 +1,5 @@
-import User from '../models/UserModel.js';
-import RecipeService from './recipeService.js';
-// import bcrypt from 'bcryptjs'
+import User from '../models/User.js';  // Corrected import
+import RecipeService from './recipeService.js';  // Ensure this import is correct
 
 const userService = {
   registerUser: async (username, email, password) => {
@@ -24,9 +23,9 @@ const userService = {
         console.error(error);
         throw new Error('Error retrieving user');
     }
-},
-  addRecipeToFavorites: async (userId, recipeId) => {
+  },
 
+  addRecipeToFavorites: async (userId, recipeId) => {
     const user = await userService.getUserById(userId);
     if (!user) {
       return { status: 404, data: { message: 'User not found' } };
@@ -37,34 +36,18 @@ const userService = {
       return { status: 404, data: { message: 'Recipe not found' } };
     }
 
-    // בדיקה אם המתכון כבר ברשימה המועדפים
-    const alreadyExists = user.favorites.some(fav => fav.recipeId === recipeId);
+    // Check if the recipe is already in favorites
+    const alreadyExists = user.favorites.includes(recipeId);
     if (alreadyExists) {
       return { status: 400, data: { message: 'Recipe already in favorites' } };
     }
 
-    // הוספת המתכון לאובייקט המועדפים
-    // const recipeData = {
-    //   recipeId : recipeId,
-    //   userId : user._id,
-    //   title: recipe.title,
-    //   ingredients: recipe.ingredients,
-    //   instructions: recipe.instructions,
-    //   preparationTime: recipe.preparationTime,
-    //   cookingTime: recipe.cookingTime,
-    //   servings: recipe.servings,
-    //   image: recipe.image,
-    //   difficulty: recipe.difficulty,
-    //   categories: recipe.categories,
-    //   description: recipe.description,
-    //   createdAt: recipe.createdAt
-    // };
-
+    // Add recipe to favorites array
     user.favorites.push(recipeId);
     await user.save();
 
     return { status: 200, data: { message: 'Recipe added to favorites', favorites: user.favorites } };
   }
-
 }
+
 export default userService;
