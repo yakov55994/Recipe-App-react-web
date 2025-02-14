@@ -28,7 +28,9 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <NavBar />
+            <AuthProvider>
           <Routes>
+
             <Route path="/" element={<Home />} />
             <Route path="/Home" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
@@ -51,6 +53,7 @@ export default function App() {
 
 
           </Routes>
+            </AuthProvider>
         </BrowserRouter>
       </AuthProvider>
     </>

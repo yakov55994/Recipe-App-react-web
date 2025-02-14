@@ -28,10 +28,10 @@ const LoginPage = () => {
           'Content-Type': 'application/json',
         },
       });
-      localStorage.setItem('username', response.data.user.username);
+      localStorage.setItem('user', response.data.user);
 
       const { user, token } = response.data; // קבלת המשתמש וה-token
-      toast.success(`התחברת בהצלחה, שלום ${user.username}`);
+      // toast.success(`התחברת בהצלחה, שלום ${user.username}`);
 
       // עדכון הקונטקסט עם המידע החדש
       login(user, token);

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios'; // עליך לוודא ש-axios מותקן
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-  // הפעלת useEffect כל פעם שה-token משתנה
+  // הפעלת useEffect כדי לטעון את המשתמש בהתחלה, אם יש token
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchUser();
-  }, [token]); // יש להריץ את ה-useEffect כאשר ה-token משתנה
+  }, [token]); // רק אם ה-token משתנה
 
   const login = (userData, token) => {
     setUser(userData);
