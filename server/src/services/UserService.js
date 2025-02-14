@@ -1,4 +1,4 @@
-import User from '../models/User.js';  // Corrected import
+import User from '../models/UserModel.js';  // Corrected import
 import RecipeService from './recipeService.js';  // Ensure this import is correct
 
 const userService = {
