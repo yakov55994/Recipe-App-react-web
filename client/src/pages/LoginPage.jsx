@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_SERVER_URL } from '../api/api.js';
 import { toast } from 'react-toastify';
-import { useAuth } from '../context/AuthContext.jsx';
+import { AuthContext, useAuth } from '../context/AuthContext.jsx';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { user, setUser } = useContext(AuthContext);
 
   const { login } = useAuth(); // החיבור לקונטקסט
-
+  console.log("user: ", user);
   const navigate = useNavigate();
-
+  const userIsLogin = user;
+  if(userIsLogin){
+    return(
+      <h1 className='flex justify-center mt-40 font-bold text-3xl '>אתה כבר מחובר לאתר . . . 🫤</h1>
+    )
+  }
   const handleLogin = async (e) => {
     e.preventDefault();
     try {

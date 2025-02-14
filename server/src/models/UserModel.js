@@ -18,9 +18,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  recipes: [{
+  favorites: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Recipe' // Reference to the Recipe model
+    ref: 'Recipe' 
   }]
 });
 

@@ -9,4 +9,6 @@ router.post('/register', userController.register);
 // בקשת התחברות
 router.post('/login', userController.login);
 
+router.post('/likeRecipe', userController.likeRecipe);
+
 export default router;

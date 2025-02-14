@@ -2,12 +2,31 @@ import React, { useEffect, useState } from "react";
 import { API_SERVER_URL } from "../api/api.js";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import Loader from './Loader.jsx';
+import { FaHeart } from "react-icons/fa";
+import { useAuth } from '../context/AuthContext.jsx';
 
 const RecipeCard = ({ mainCategory, subCategory }) => {
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dataSend, setDataSend] = useState({
+    userId: null, 
+    recipeId: null
+  });
+
   const navigate = useNavigate();
   const { category } = useParams();
+  const { user } = useAuth();
+
+  // Ensure the user state is updated before using it
+  useEffect(() => {
+    if (user) {
+      setDataSend((prevData) => ({
+        ...prevData,
+        userId: user._id
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -19,13 +38,11 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
           },
         });
         const recipes = response.data;
-
         const filtered = recipes.filter(
           (recipe) =>
             recipe.categories.mainCategory === mainCategory &&
             recipe.categories.subCategory === subCategory
         );
-
         setFilteredRecipes(filtered);
       } catch (error) {
         console.error("Error fetching recipes:", error.message);
@@ -35,15 +52,11 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
     };
 
     fetchRecipes();
-  }, []);
+  }, [mainCategory, subCategory]); // Add dependencies to ensure it re-fetches correctly
 
-  if (loading) {
-    return (
-      <h1 className="text-center text-xl font-bold text-blue-500">
-        טוען מתכונים...
-      </h1>
-    );
-  }
+  // if (loading) {
+  //   return <Loader isLoading={true} />;
+  // }
 
   if (filteredRecipes.length === 0) {
     return (
@@ -55,6 +68,33 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
 
   const MoveToDetails = (recipe) => {
     navigate(`/${category}/RecipeDetails/${recipe._id}`);
+  };
+
+  const A_recipe_I_Liked = async (recipe) => {
+    try {
+      setDataSend((prevData) => ({
+        ...prevData,
+        recipeId: recipe._id
+      }));
+      console.log(`${API_SERVER_URL}/user/likeRecipe`);
+      const response = await axios.post(
+        `${API_SERVER_URL}/user/likeRecipe`,
+        dataSend,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type" : "application/json"
+
+          },
+        }
+      );
+      // if (response.status === 200) {
+      //   console.log("Recipe liked successfully!");
+      // }
+    } catch (err) {
+      console.log(err.message);
+      console.error("Error liking the recipe:", err);
+    }
   };
 
   return (
@@ -76,8 +116,14 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
             <h5 className="mb-2 text-lg font-bold text-gray-800">
               {recipe.title}
             </h5>
-            <p className="text-gray-600 text-sm line-clamp-2">
+            <p className="text-gray-600 text-sm line-clamp-2 flex items-center justify-between">
               {recipe.description}
+              <button className="flex justify-center content-between">
+                <FaHeart
+                  className="size-8 text-slate-800 border-gray-600"
+                  onClick={() => A_recipe_I_Liked(recipe)}
+                />
+              </button>
             </p>
           </div>
         </div>

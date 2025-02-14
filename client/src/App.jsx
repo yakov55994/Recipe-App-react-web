@@ -19,6 +19,7 @@ import AllRecipes from "./pages/AllRecipes.jsx";
 import Search from "./pages/Search.jsx";
 import SearchResult from "./pages/SearchResult.jsx";
 import RecipeDetails from "./pages/RecipeDetails.jsx";
+import CategoryPage from "./pages/CategoryPage.jsx";
 
 export default function App() {
   return (
@@ -46,6 +47,8 @@ export default function App() {
             <Route path="/SearchResult" element={<SearchResult />} />
             <Route path="/:category/RecipeDetails/:id" element={<RecipeDetails />} />
             <Route path="/RecipeDetails/:id" element={<RecipeDetails />} />
+            <Route path="/category/:categoryName" element={<CategoryPage />} />
+
 
           </Routes>
         </BrowserRouter>
