@@ -32,7 +32,7 @@ const userService = {
       return { status: 404, data: { message: 'User not found' } };
     }
 
-    const recipe = await RecipeService.getRecipeById(recipeId);
+    const recipe = await RecipeService.getById(recipeId);
     if (!recipe) {
       return { status: 404, data: { message: 'Recipe not found' } };
     }
