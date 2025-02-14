@@ -1,4 +1,5 @@
 import User from '../models/UserModel.js';
+import RecipeService from './recipeService.js';
 // import bcrypt from 'bcryptjs'
 
 const userService = {
@@ -31,7 +32,7 @@ const userService = {
       return { status: 404, data: { message: 'User not found' } };
     }
 
-    const recipe = await recipeService.getRecipeById(recipeId);
+    const recipe = await RecipeService.getRecipeById(recipeId);
     if (!recipe) {
       return { status: 404, data: { message: 'Recipe not found' } };
     }
