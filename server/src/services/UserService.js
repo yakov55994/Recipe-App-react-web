@@ -47,7 +47,19 @@ const userService = {
     await user.save();
 
     return { status: 200, data: { message: 'Recipe added to favorites', favorites: user.favorites } };
-  }
+  },
+  getFavorites: async (userId) => {
+    try {
+      const user = await User.findById(userId).populate('favorites');
+      if (!user) {
+        return { status: 404, data: { message: 'User not found' } };
+      }
+      return { status: 200, data: user.favorites }; // מחזירים את רשימת המתכונים המועדפים
+    } catch (error) {
+      console.error(error);
+      throw new Error('Error retrieving user favorites');
+    }
+  },
 }
 
 export default userService;

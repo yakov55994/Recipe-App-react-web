@@ -13,4 +13,6 @@ router.get('/:id', userController.getUserById);
 
 router.post('/likeRecipe', userController.likeRecipe);
 
+router.get('/:userId/favorites', userController.getFavorites);
+
 export default router;

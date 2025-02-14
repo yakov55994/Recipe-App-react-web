@@ -60,7 +60,19 @@ const userController = {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
-}
-
+},
+  getFavorites: async (req, res) => {
+    const { userId } = req.params;  // נקבל את ה-ID של המשתמש מה-params של הבקשה
+    try {
+      const result = await userService.getFavorites(userId); // קוראים לפונקציה בסרוויס
+      if (result.status === 200) {
+        return res.status(200).json(result.data); // מחזירים את המתכונים המועדפים
+      }
+      return res.status(result.status).json(result.data);
+    } catch (error) {
+      return res.status(500).json({ message: 'An error occurred while fetching favorites' });
+    }
+  },
+  
 }
 export default userController;
