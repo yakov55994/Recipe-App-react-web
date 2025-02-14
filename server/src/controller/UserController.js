@@ -29,8 +29,23 @@ const userController = {
     }
   },
 
+  getUserById: async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await userService.getUserById(userId);  // קריאה לסרוויס
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json(user);  // מחזיר את המידע על המשתמש
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+},
   likeRecipe: async (req, res) => {
-    console.log("🔹 Received Data:", req.body); // בדוק את הנתונים שמגיעים
+    console.log("🔹 Received Data:", req.body);
 
     const { userId, recipeId } = req.body;
     // console.log(req.body);

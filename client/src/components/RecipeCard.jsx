@@ -72,30 +72,30 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
 
   const A_recipe_I_Liked = async (recipe) => {
     try {
-      setDataSend((prevData) => ({
-        ...prevData,
-        recipeId: recipe._id
-      }));
-      console.log(`${API_SERVER_URL}/user/likeRecipe`);
+      const requestData = {
+        userId: user?._id, // ודא שהמשתמש מחובר
+        recipeId: recipe?._id
+      };
+  
+      console.log("🔹 Sending Data:", requestData);
+  
       const response = await axios.post(
         `${API_SERVER_URL}/user/likeRecipe`,
-        dataSend,
+        requestData, // שליחה ישירה של האובייקט
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type" : "application/json"
-
-          },
+            "Content-Type": "application/json"
+          }
         }
       );
-      // if (response.status === 200) {
-      //   console.log("Recipe liked successfully!");
-      // }
+  
+      console.log("✔ Recipe liked successfully!", response.data);
     } catch (err) {
-      console.log(err.message);
-      console.error("Error liking the recipe:", err);
+      console.error("❌ Error liking the recipe:", err.response?.data || err.message);
     }
   };
+  
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-6 md:px-8">

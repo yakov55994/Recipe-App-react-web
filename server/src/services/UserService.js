@@ -14,9 +14,19 @@ const userService = {
   getUserByEmail: async (email) => {
     return await User.findOne({ email });
   },
+
+  getUserById: async (userId) => {
+    try {
+        const user = await User.findById(userId);  // חיפוש משתמש לפי ID
+        return user;  // מחזיר את המידע על המשתמש
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error retrieving user');
+    }
+},
   addRecipeToFavorites: async (userId, recipeId) => {
 
-    const user = await userService.getUserByEmail(userId);
+    const user = await userService.getUserById(userId);
     if (!user) {
       return { status: 404, data: { message: 'User not found' } };
     }
