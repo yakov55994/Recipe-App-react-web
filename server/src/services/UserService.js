@@ -44,23 +44,23 @@ const userService = {
     }
 
     // הוספת המתכון לאובייקט המועדפים
-    const recipeData = {
-      recipeId : recipeId,
-      userId : user._id,
-      title: recipe.title,
-      ingredients: recipe.ingredients,
-      instructions: recipe.instructions,
-      preparationTime: recipe.preparationTime,
-      cookingTime: recipe.cookingTime,
-      servings: recipe.servings,
-      image: recipe.image,
-      difficulty: recipe.difficulty,
-      categories: recipe.categories,
-      description: recipe.description,
-      createdAt: recipe.createdAt
-    };
+    // const recipeData = {
+    //   recipeId : recipeId,
+    //   userId : user._id,
+    //   title: recipe.title,
+    //   ingredients: recipe.ingredients,
+    //   instructions: recipe.instructions,
+    //   preparationTime: recipe.preparationTime,
+    //   cookingTime: recipe.cookingTime,
+    //   servings: recipe.servings,
+    //   image: recipe.image,
+    //   difficulty: recipe.difficulty,
+    //   categories: recipe.categories,
+    //   description: recipe.description,
+    //   createdAt: recipe.createdAt
+    // };
 
-    user.favorites.push(recipeData);
+    user.favorites.push(recipeId);
     await user.save();
 
     return { status: 200, data: { message: 'Recipe added to favorites', favorites: user.favorites } };
