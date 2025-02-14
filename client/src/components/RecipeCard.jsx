@@ -15,7 +15,7 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
   const navigate = useNavigate();
   const { category } = useParams();
 
-  console.log(user)
+  // console.log(user)
   useEffect(() => {
     if (user) {
       setUserId(user._id);
