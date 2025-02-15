@@ -15,4 +15,7 @@ router.post('/likeRecipe', userController.likeRecipe);
 
 router.get('/:userId/favorites', userController.getFavorites);
 
+router.delete("/favorites/:recipeId", userController.deleteFavoriteRecipe);
+
+
 export default router;

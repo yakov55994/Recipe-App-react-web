@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 // import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthContext } from '../context/AuthContext.jsx';
+import { AuthContext, useAuth } from '../context/AuthContext.jsx';
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 
 
 const NavBar = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
@@ -125,12 +125,9 @@ const NavBar = () => {
   };
 
   const LogOut = () => {
-    // toast.success('התנתקת בהצלחה', { position: toast.POSITION.TOP_RIGHT });
-    localStorage.removeItem("username")
-    localStorage.removeItem("token")
-    setUser(null);
-  }
-
+    logout();
+    navigate('./login')
+  };
   return (
     <nav className="bg-gray-800 text-white relative z-40" dir="rtl">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -175,9 +172,10 @@ const NavBar = () => {
               <Link to='./login'>
                 <IoPersonCircleSharp className='size-7 mt-1' />
               </Link>
-              <Link to='./home'>
-                <RiLogoutBoxRFill className='size-7 mt-1' onClick={LogOut}/>
-              </Link>
+              <button  onClick={LogOut}>
+                <RiLogoutBoxRFill className='size-7 mt-1'/>
+
+              </button>
             </div>
           </div>
         </div>

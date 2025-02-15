@@ -12,7 +12,6 @@ const LoginPage = () => {
   const { user, setUser } = useContext(AuthContext);
 
   const { login } = useAuth(); // החיבור לקונטקסט
-  console.log("user: ", user);
   const navigate = useNavigate();
   const userIsLogin = user;
   if(userIsLogin){

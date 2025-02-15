@@ -73,6 +73,20 @@ const userController = {
       return res.status(500).json({ message: 'An error occurred while fetching favorites' });
     }
   },
+  deleteFavoriteRecipe: async (req, res) => {
+    try {
+      // console.log(req.user);
+      const {userId} = req.body; // מזהה המשתמש מתוך ה-Token
+      const { recipeId } = req.params;
+  
+      const result = await userService.removeFavoriteRecipe (userId, recipeId);
+      
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("❌ שגיאה במחיקת המתכון:", error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
   
 }
 export default userController;

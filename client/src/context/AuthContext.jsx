@@ -10,7 +10,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || '');
-
+  
   // הפעלת useEffect כדי לטעון את המשתמש בהתחלה, אם יש token
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,7 +42,10 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken('');
+    localStorage.removeItem("username");
     localStorage.removeItem('token'); // מחיקת ה-token מ-localStorage
+    localStorage.removeItem('user'); // מחיקת ה-token מ-localStorage
+    navigate('./login');
   };
 
   return (

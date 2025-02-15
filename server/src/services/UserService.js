@@ -60,6 +60,19 @@ const userService = {
       throw new Error('Error retrieving user favorites');
     }
   },
+  removeFavoriteRecipe : async (userId, recipeId) => {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("משתמש לא נמצא");
+    }
+  
+    // סינון המתכון מתוך רשימת המועדפים
+    user.favorites = user.favorites.filter((fav) => fav.toString() !== recipeId);
+  
+    await user.save(); // שמירת השינוי ב-DB
+  
+    return { message: "✅ המתכון נמחק מהמועדפים בהצלחה!" };
+  }
 }
 
 export default userService;
