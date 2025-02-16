@@ -17,7 +17,7 @@ const PersonalArea = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    console.log('Stored User:', storedUser); // Log the stored user data
+    // console.log('Stored User:', storedUser); // Log the stored user data
     if (storedUser && !user) {
       try {
         const userFromStorage = JSON.parse(storedUser);

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { API_SERVER_URL } from '../api/api';
 
 export const AuthContext = createContext();
 
@@ -10,7 +11,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || '');
-  
+
   // הפעלת useEffect כדי לטעון את המשתמש בהתחלה, אם יש token
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,19 +34,25 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, [token]); // רק אם ה-token משתנה
 
-  const login = (userData, token) => {
-    setUser(userData);
-    setToken(token);
-    localStorage.setItem('token', token); // שמירה ב-localStorage
+  const login = async (email, password) => {
+    try {
+      // שליחת בקשה לשרת עם פרטי המשתמש
+      const response = await axios.post(`${API_SERVER_URL}/user/login`,
+        { email, password }, 
+        { withCredentials: true },);
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+      setToken(token);
+      // אם ההתחברות הצליחה
+      console.log(response?.data?.message); // "Login successful"
+    } catch (error) {
+      console.error('Login failed:', error?.response?.data?.message);
+    }
   };
 
   const logout = () => {
+    localStorage.removeItem('user');
     setUser(null);
-    setToken('');
-    localStorage.removeItem("username");
-    localStorage.removeItem('token'); // מחיקת ה-token מ-localStorage
-    localStorage.removeItem('user'); // מחיקת ה-token מ-localStorage
-    navigate('./login');
   };
 
   return (

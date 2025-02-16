@@ -10,6 +10,8 @@ import { RiLogoutBoxRFill } from "react-icons/ri";
 
 const NavBar = () => {
   const { user, setUser, logout } = useContext(AuthContext);
+
+  console.log("User ", user)
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
@@ -128,6 +130,8 @@ const NavBar = () => {
     logout();
     navigate('./login')
   };
+  // console.log("User in localStorage:", localStorage.getItem("user"));
+
   return (
     <nav className="bg-gray-800 text-white relative z-40" dir="rtl">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -169,13 +173,16 @@ const NavBar = () => {
               <Link to="/CreateRecipe" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
                 📝 יצירת מתכון
               </Link>
-              <Link to='./login'>
-                <IoPersonCircleSharp className='size-7 mt-1' />
-              </Link>
-              <button  onClick={LogOut}>
-                <RiLogoutBoxRFill className='size-7 mt-1'/>
+              {user != null && user != undefined ? (
+                <button onClick={LogOut}>
+                  <RiLogoutBoxRFill className="size-7 mt-1" />
+                </button>
+              ) : (
+                <Link to="/login">
+                  <IoPersonCircleSharp className="size-7 mt-1" />
+                </Link>
+              )}
 
-              </button>
             </div>
           </div>
         </div>

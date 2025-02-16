@@ -1,5 +1,6 @@
 import express from 'express';
 import userController from '../controller/UserController.js'
+import authenticate from '../middleware/Authenticate.js';
 
 const router = express.Router();
 
@@ -7,7 +8,7 @@ const router = express.Router();
 router.post('/register', userController.register);
 
 // בקשת התחברות
-router.post('/login', userController.login);
+router.post('/login', authenticate, userController.login);
 
 router.get('/:id', userController.getUserById);
 

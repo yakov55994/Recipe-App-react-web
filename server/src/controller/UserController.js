@@ -1,4 +1,5 @@
 import userService from '../services/UserService.js'
+import jwt from 'jsonwebtoken';
 
 const userController = {
 
@@ -22,6 +23,15 @@ const userController = {
 
       const isMatch = await user.matchPassword(password);
       if (!isMatch) return res.status(400).json({ message: 'Invalid password' });
+
+      const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      res.cookie('token', token, {
+        httpOnly: true,    // הגנה מ-JavaScript בצד הלקוח
+        secure: process.env.NODE_ENV === 'production', // מאובטח ב-https בסביבת פרודקשן
+        sameSite: 'Strict', // הגנה על ידי SameSite
+        maxAge: 3600000,    // זמן תוקף (שעה)
+      });
 
       res.status(200).json({ message: 'Login successful', user });
     } catch (error) {
