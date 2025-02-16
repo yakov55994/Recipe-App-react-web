@@ -5,6 +5,7 @@ const recipeController = {
         const { title, ingredients, instructions, preparationTime, cookingTime, servings, imageUrl, difficulty, categories, user, description } = req.body;
         const recipeData = {
             title,
+            description,
             ingredients,
             instructions,
             preparationTime,
@@ -13,7 +14,6 @@ const recipeController = {
             imageUrl,
             difficulty,
             categories,
-            description,
             user: user._id
         };
         if (!title || !ingredients || !instructions || !cookingTime || !preparationTime || !servings || !imageUrl || !difficulty || !categories || !user || !description)
@@ -65,7 +65,8 @@ const recipeController = {
             console.error(error);
             res.status(500).json({ message: 'Server error' });
         }
-    }
+    },
+    
 };
 
 export default recipeController;

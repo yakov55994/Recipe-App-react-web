@@ -1,28 +1,42 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { API_SERVER_URL } from "../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Loader from "../components/Loader.jsx";
+import Loader from "../components/loader.jsx";
 import { Tooltip } from "react-tooltip";
+import { FaHeart } from "react-icons/fa";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const AllRecipes = () => {
+  const { user } = useContext(AuthContext);
+
   const navigate = useNavigate();
   const { category } = useParams();
   const [allRecipe, setAllRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      setUserId(user._id);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
+      console.log("Fetching recipes...");
       try {
         setIsLoading(true);
-        const response = await axios.get(`${API_SERVER_URL}/recipe/`);
-        const recipes = response.data;
-        setAllRecipes(recipes);
+        const response = await axios.get(`${API_SERVER_URL}/recipe`);
+        console.log("Response received:", response.data);
+        setAllRecipes(response.data);
       } catch (error) {
+        console.error("Error fetching recipes:", error);
         toast.error(`Error fetching recipes: ${error.message}`);
       } finally {
         setIsLoading(false);
+        console.log("Loading finished.");
       }
     };
 
@@ -54,6 +68,37 @@ const AllRecipes = () => {
     navigate(`/${category}/RecipeDetails/${recipe._id}`);
   };
 
+  const handleRecipeLike = async (recipe) => {
+    if (!userId) {
+      console.error("User is not logged in");
+      return;
+    }
+
+    const requestData = {
+      userId: userId,
+      recipeId: recipe?._id,
+    };
+
+    try {
+      const response = await axios.post(
+        `${API_SERVER_URL}/user/likeRecipe`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("✔ Recipe liked successfully!", response.data);
+    } catch (err) {
+      console.error(
+        "❌ Error liking the recipe:",
+        err.response?.data || err.message
+      );
+    }
+  };
+
   return (
     <>
       <h1 className="font-semibold text-center text-4xl text-slate-800 mt-10 mb-10">
@@ -81,18 +126,22 @@ const AllRecipes = () => {
               <p className="text-gray-600 text-sm line-clamp-2">
                 {recipe.description}
               </p>
-              <p></p>
-              <Link
-                className="text-blue-500"
-                data-tooltip-id="unique-tooltip"
-                data-tooltip-content="לחץ כאן לצפייה בקטגוריה"
-              >
-                #{translateToHebrew(recipe.categories.mainCategory)} #{" "}
-                {translateToHebrew(recipe.categories.subCategory)}
-              </Link>
-              <Tooltip id="unique-tooltip" />
-
-              <Tooltip />
+              <div className="flex items-center justify-between">
+                <Link
+                  className="text-blue-500"
+                  data-tooltip-id="unique-tooltip"
+                  data-tooltip-content="לחץ כאן לצפייה בקטגוריה"
+                >
+                  #{translateToHebrew(recipe.categories.mainCategory)} #{" "}
+                  {translateToHebrew(recipe.categories.subCategory)}
+                </Link>
+                <button
+                  className="flex justify-center items-center text-gray-800"
+                  onClick={() => handleRecipeLike(recipe)}
+                >
+                  <FaHeart className="text-2xl cursor-pointer hover:text-red-500" />
+                </button>
+              </div>
             </div>
           </div>
         ))}

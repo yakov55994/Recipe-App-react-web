@@ -1,4 +1,5 @@
 import userService from '../services/UserService.js'
+import jwt from 'jsonwebtoken';
 
 const userController = {
 
@@ -14,20 +15,42 @@ const userController = {
   },
 
   // פונקציה לבדוק אם המשתמש קיים
-  login: async (req, res) => {
+ login: async (req, res) => {
     const { email, password } = req.body;
     try {
-      const user = await userService.getUserByEmail(email);
-      if (!user) return res.status(404).json({ message: 'User not found' });
+        const user = await userService.getUserByEmail(email);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
-      const isMatch = await user.matchPassword(password);
-      if (!isMatch) return res.status(400).json({ message: 'Invalid password' });
+        const isMatch = await user.matchPassword(password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid password' });
+        }
 
-      res.status(200).json({ message: 'Login successful', user });
+        // Create token
+        const token = jwt.sign(
+            { _id: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // Send response with both token and user
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                _id: user._id,
+                email: user.email,
+                // Add other user fields you want to send
+                // but DON'T include sensitive info like password
+            }
+        });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-  },
+},
 
   getUserById: async (req, res) => {
     try {
@@ -60,7 +83,33 @@ const userController = {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
-}
-
+},
+  getFavorites: async (req, res) => {
+    const { userId } = req.params;  // נקבל את ה-ID של המשתמש מה-params של הבקשה
+    try {
+      const result = await userService.getFavorites(userId); // קוראים לפונקציה בסרוויס
+      if (result.status === 200) {
+        return res.status(200).json(result.data); // מחזירים את המתכונים המועדפים
+      }
+      return res.status(result.status).json(result.data);
+    } catch (error) {
+      return res.status(500).json({ message: 'An error occurred while fetching favorites' });
+    }
+  },
+  deleteFavoriteRecipe: async (req, res) => {
+    try {
+      // console.log(req.user);
+      const {userId} = req.body; // מזהה המשתמש מתוך ה-Token
+      const { recipeId } = req.params;
+  
+      const result = await userService.removeFavoriteRecipe (userId, recipeId);
+      
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("❌ שגיאה במחיקת המתכון:", error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+  
 }
 export default userController;

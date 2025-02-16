@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { motion } from "framer-motion";
 import { API_SERVER_URL } from "../api/api.js";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from './Loader.jsx';
+import Loader from "./Loader.jsx";
 import { FaHeart } from "react-icons/fa";
-import { useAuth } from '../context/AuthContext.jsx';
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const RecipeCard = ({ mainCategory, subCategory }) => {
+  const { user } = useContext(AuthContext);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [dataSend, setDataSend] = useState({
-    userId: null, 
-    recipeId: null
-  });
+  const [userId, setUserId] = useState(null);
+  const [likedRecipeId, setLikedRecipeId] = useState(null);
 
   const navigate = useNavigate();
   const { category } = useParams();
-  const { user } = useAuth();
 
-  // Ensure the user state is updated before using it
   useEffect(() => {
     if (user) {
-      setDataSend((prevData) => ({
-        ...prevData,
-        userId: user._id
-      }));
+      setUserId(user._id);
     }
   }, [user]);
 
@@ -52,11 +47,50 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
     };
 
     fetchRecipes();
-  }, [mainCategory, subCategory]); // Add dependencies to ensure it re-fetches correctly
+  }, [mainCategory, subCategory]);
 
-  // if (loading) {
-  //   return <Loader isLoading={true} />;
-  // }
+  const moveToDetails = (recipe) => {
+    navigate(`/${category}/RecipeDetails/${recipe._id}`);
+  };
+
+  const handleRecipeLike = async (recipe) => {
+    if (!userId) {
+      console.error("User is not logged in");
+      return;
+    }
+
+    setLikedRecipeId(recipe._id); // מפעיל את האנימציה
+
+    const requestData = {
+      userId: userId,
+      recipeId: recipe?._id,
+    };
+
+    try {
+      const response = await axios.post(
+        `${API_SERVER_URL}/user/likeRecipe`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("✔ Recipe liked successfully!", response.data);
+    } catch (err) {
+      console.error("❌ Error liking the recipe:", err.response?.data || err.message);
+    }
+
+    // נעלים את הלב אחרי זמן קצר
+    setTimeout(() => {
+      setLikedRecipeId(null);
+    }, 1000);
+  };
+
+  if (loading) {
+    return <Loader isLoading={true} />;
+  }
 
   if (filteredRecipes.length === 0) {
     return (
@@ -66,66 +100,43 @@ const RecipeCard = ({ mainCategory, subCategory }) => {
     );
   }
 
-  const MoveToDetails = (recipe) => {
-    navigate(`/${category}/RecipeDetails/${recipe._id}`);
-  };
-
-  const A_recipe_I_Liked = async (recipe) => {
-    try {
-      const requestData = {
-        userId: user?._id, // ודא שהמשתמש מחובר
-        recipeId: recipe?._id
-      };
-  
-      console.log("🔹 Sending Data:", requestData);
-  
-      const response = await axios.post(
-        `${API_SERVER_URL}/user/likeRecipe`,
-        requestData, // שליחה ישירה של האובייקט
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json"
-          }
-        }
-      );
-  
-      console.log("✔ Recipe liked successfully!", response.data);
-    } catch (err) {
-      console.error("❌ Error liking the recipe:", err.response?.data || err.message);
-    }
-  };
-  
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-6 md:px-8">
       {filteredRecipes.map((recipe) => (
         <div
           key={recipe._id}
-          className="max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
+          className="relative max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
         >
-          <a href="#">
-            <img
-              className="rounded-t-lg w-full h-48 object-cover cursor-pointer"
-              src={recipe.imageUrl}
-              alt={recipe.title}
-              onClick={() => MoveToDetails(recipe)}
-            />
-          </a>
+          <img
+            className="rounded-t-lg w-full h-48 object-cover cursor-pointer"
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            onClick={() => moveToDetails(recipe)}
+          />
           <div className="p-4">
-            <h5 className="mb-2 text-lg font-bold text-gray-800">
-              {recipe.title}
-            </h5>
+            <h5 className="mb-2 text-lg font-bold text-gray-800">{recipe.title}</h5>
             <p className="text-gray-600 text-sm line-clamp-2 flex items-center justify-between">
               {recipe.description}
-              <button className="flex justify-center content-between">
-                <FaHeart
-                  className="size-8 text-slate-800 border-gray-600"
-                  onClick={() => A_recipe_I_Liked(recipe)}
-                />
+              <button
+                className="relative flex justify-center items-center text-gray-800"
+                onClick={() => handleRecipeLike(recipe)}
+              >
+                <FaHeart className="text-2xl cursor-pointer hover:text-red-500" />
               </button>
             </p>
           </div>
+
+          {/* אנימציה של הלב */}
+          {likedRecipeId === recipe._id && (
+            <motion.div
+              initial={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 0, y: -100 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="absolute left-1/2 top-1/2 text-red-500 text-4xl"
+            >
+              <FaHeart />
+            </motion.div>
+          )}
         </div>
       ))}
     </div>

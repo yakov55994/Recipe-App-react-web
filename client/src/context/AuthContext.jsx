@@ -1,52 +1,42 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios'; // עליך לוודא ש-axios מותקן
-
-export const AuthContext = createContext();
-
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+import axios from 'axios';
+import { API_SERVER_URL } from '../api/api';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-  // הפעלת useEffect כל פעם שה-token משתנה
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (token) {
-        try {
-          // שליחה של בקשה לשרת עם ה-token שנמצא ב-localStorage
-          const response = await axios.get('/user/profile', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUser(response.data.user); // עדכון המשתמש מה-API
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          setUser(null); // במידה ויש טעות, נדאג להחזיר את המשתמש ל-null
-        }
-      }
-    };
-
-    fetchUser();
-  }, [token]); // יש להריץ את ה-useEffect כאשר ה-token משתנה
-
-  const login = (userData, token) => {
-    setUser(userData);
-    setToken(token);
-    localStorage.setItem('token', token); // שמירה ב-localStorage
+  // Changed the login function to match how it's called in LoginPage
+  const login = async (loggedInUser, token) => {  // Changed parameters to match what LoginPage sends
+    try {
+      // Store the token and user in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(loggedInUser));
+      
+      // Update state
+      setToken(token);
+      setUser(loggedInUser);
+      
+      // Set the default authorization header for future requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
     setToken('');
-    localStorage.removeItem('token'); // מחיקת ה-token מ-localStorage
+    // Clear the authorization header
+    delete axios.defaults.headers.common['Authorization'];
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

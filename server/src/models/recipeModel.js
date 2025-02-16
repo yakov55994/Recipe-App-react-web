@@ -33,10 +33,11 @@ const recipeSchema = new mongoose.Schema({
         ref: 'User', // Reference to the User model
         required: true
     },
-    description:{
+    description: {
         type: String,
         required: true,
-        maxlength: 100     }
+        maxlength: 1000
+    }
 });
 
 const Recipe = mongoose.model('Recipe', recipeSchema);

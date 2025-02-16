@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 // import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthContext } from '../context/AuthContext.jsx';
+import { AuthContext, useAuth } from '../context/AuthContext.jsx';
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 
 
 const NavBar = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext);
+
+  console.log("User ", user)
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
@@ -125,11 +127,10 @@ const NavBar = () => {
   };
 
   const LogOut = () => {
-    // toast.success('התנתקת בהצלחה', { position: toast.POSITION.TOP_RIGHT });
-    localStorage.removeItem("username")
-    localStorage.removeItem("token")
-    setUser(null);
-  }
+    logout();
+    navigate('./login')
+  };
+  // console.log("User in localStorage:", localStorage.getItem("user"));
 
   return (
     <nav className="bg-gray-800 text-white relative z-40" dir="rtl">
@@ -172,12 +173,16 @@ const NavBar = () => {
               <Link to="/CreateRecipe" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
                 📝 יצירת מתכון
               </Link>
-              <Link to='./login'>
-                <IoPersonCircleSharp className='size-7 mt-1' />
-              </Link>
-              <Link to='./home'>
-                <RiLogoutBoxRFill className='size-7 mt-1' onClick={LogOut}/>
-              </Link>
+              {user != null && user != undefined ? (
+                <button onClick={LogOut}>
+                  <RiLogoutBoxRFill className="size-7 mt-1" />
+                </button>
+              ) : (
+                <Link to="/login">
+                  <IoPersonCircleSharp className="size-7 mt-1" />
+                </Link>
+              )}
+
             </div>
           </div>
         </div>
