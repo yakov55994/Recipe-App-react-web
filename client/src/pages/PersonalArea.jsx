@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from "react";
 import { API_SERVER_URL } from "../api/api.js";
-import axios from 'axios';
-import { AuthContext } from '../context/AuthContext.jsx';
-import { useParams, useNavigate } from 'react-router-dom';
-import Loader from '../components/loader.jsx';
-import { toast } from 'react-toastify';
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext.jsx";
+import { useParams, useNavigate } from "react-router-dom";
+import Loader from "../components/Loader.jsx";
+import { toast } from "react-toastify";
 
 const PersonalArea = () => {
   const [favorites, setFavorites] = useState([]);
@@ -16,14 +16,14 @@ const PersonalArea = () => {
   const navigate = useNavigate(); // To navigate to other pages
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     // console.log('Stored User:', storedUser); // Log the stored user data
     if (storedUser && !user) {
       try {
         const userFromStorage = JSON.parse(storedUser);
         setUser(userFromStorage); // Update the user context
       } catch (error) {
-        console.error('Error parsing user data:', error);
+        console.error("Error parsing user data:", error);
       }
     }
   }, [user, setUser]);
@@ -31,7 +31,7 @@ const PersonalArea = () => {
   // Save user data to localStorage when user changes
   useEffect(() => {
     if (user) {
-      localStorage.setItem('user', JSON.stringify(user)); // Save to localStorage
+      localStorage.setItem("user", JSON.stringify(user)); // Save to localStorage
     }
   }, [user]);
 
@@ -50,7 +50,9 @@ const PersonalArea = () => {
 
       try {
         setLoading(true);
-        const response = await axios.get(`${API_SERVER_URL}/user/${userId}/favorites`);
+        const response = await axios.get(
+          `${API_SERVER_URL}/user/${userId}/favorites`
+        );
         setFavorites(response.data);
       } catch (err) {
         setError(err.response?.data?.message || "אירעה שגיאה בטעינת המועדפים");
@@ -67,23 +69,26 @@ const PersonalArea = () => {
   // }
   const handleDeleteRecipe = async (favorite) => {
     try {
-      
-      await axios.delete(`${API_SERVER_URL}/user/favorites/${favorite._id}`,
-        {
-          data: { userId: userId }}
+      await axios.delete(`${API_SERVER_URL}/user/favorites/${favorite._id}`, {
+        data: { userId: userId },
+      });
+
+      const updatedFavorites = favorites.filter(
+        (fav) => fav._id !== favorite._id
       );
-  
-      const updatedFavorites = favorites.filter((fav) => fav._id !== favorite._id);
       setFavorites(updatedFavorites);
-  
+
       toast.success(" המתכון נמחק מהמועדפים בהצלחה!");
     } catch (error) {
-      console.error("❌ שגיאה במחיקת המתכון:", error.response?.data || error.message);
-      toast.error(`❌ שגיאה: ${error.response?.data?.message || error.message}`);
+      console.error(
+        "❌ שגיאה במחיקת המתכון:",
+        error.response?.data || error.message
+      );
+      toast.error(
+        `❌ שגיאה: ${error.response?.data?.message || error.message}`
+      );
     }
   };
-  
-
 
   if (!user) {
     return (
@@ -101,7 +106,10 @@ const PersonalArea = () => {
       <div className="text-center p-8">
         <h1 className="text-center text-6xl mb-6 mt-10">האיזור האישי 📇</h1>
         <div className="text-xl text-red-500">{error}</div>
-        <button className="mt-4 p-2 bg-red-500 text-white rounded" onClick={() => setError(null)}>
+        <button
+          className="mt-4 p-2 bg-red-500 text-white rounded"
+          onClick={() => setError(null)}
+        >
           נסה שוב
         </button>
       </div>
@@ -132,16 +140,17 @@ const PersonalArea = () => {
               )}
               <p className="mb-2">{favorite.description}</p>
               <button
-                className='rounded-xl bg-slate-500 font-bold p-2 hover:bg-slate-300'
+                className="rounded-xl bg-slate-500 font-bold p-2 hover:bg-slate-300"
                 onClick={() => handleDeleteRecipe(favorite)}
-                >מחק מהאהובים</button>
+              >
+                מחק מהאהובים
+              </button>
             </div>
           ))}
         </div>
       ) : (
         <div className="text-center text-gray-500 p-4">
           <h3>עדיין לא הוספתם מתכונים למועדפים</h3>
-
         </div>
       )}
     </div>

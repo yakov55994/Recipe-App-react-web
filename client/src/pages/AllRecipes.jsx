@@ -3,14 +3,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { API_SERVER_URL } from "../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Loader from "../components/loader.jsx";
-import { Tooltip } from 'react-tooltip';
+import Loader from "../components/Loader.jsx";
+import { Tooltip } from "react-tooltip";
 import { FaHeart } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext.jsx";
 
-
 const AllRecipes = () => {
-
   const { user } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -24,7 +22,6 @@ const AllRecipes = () => {
       setUserId(user._id);
     }
   }, [user]);
-
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -46,20 +43,18 @@ const AllRecipes = () => {
     fetchRecipes();
   }, []);
 
-
   const translateToHebrew = (englishText) => {
     const translationMap = {
-      "Dairy": "חלבי",
-      "Meat": "בשרי",
-      "Fur": "פרווה",
-      "Dishes": "מנות",
-      "Desserts": "קינוחים",
-      "Soups": "מרקים",
+      Dairy: "חלבי",
+      Meat: "בשרי",
+      Fur: "פרווה",
+      Dishes: "מנות",
+      Desserts: "קינוחים",
+      Soups: "מרקים",
     };
 
     return translationMap[englishText] || englishText; // אם לא נמצא תרגום, מחזיר את הערך כמו שהוא
   };
-
 
   if (isLoading) {
     return <Loader isLoading={true} />;
@@ -97,13 +92,18 @@ const AllRecipes = () => {
       );
       console.log("✔ Recipe liked successfully!", response.data);
     } catch (err) {
-      console.error("❌ Error liking the recipe:", err.response?.data || err.message);
+      console.error(
+        "❌ Error liking the recipe:",
+        err.response?.data || err.message
+      );
     }
   };
 
   return (
     <>
-      <h1 className="font-semibold text-center text-4xl text-slate-800 mt-10 mb-10">אוסף מתכונים </h1>
+      <h1 className="font-semibold text-center text-4xl text-slate-800 mt-10 mb-10">
+        אוסף מתכונים{" "}
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-6 md:px-8">
         {allRecipe.map((recipe) => (
           <div
@@ -120,7 +120,9 @@ const AllRecipes = () => {
             </a>
             <div className="p-4">
               {/* {console.log(recipe.categories)} */}
-              <h5 className="mb-2 text-lg font-bold text-gray-800">{recipe.title}</h5>
+              <h5 className="mb-2 text-lg font-bold text-gray-800">
+                {recipe.title}
+              </h5>
               <p className="text-gray-600 text-sm line-clamp-2">
                 {recipe.description}
               </p>
@@ -130,7 +132,8 @@ const AllRecipes = () => {
                   data-tooltip-id="unique-tooltip"
                   data-tooltip-content="לחץ כאן לצפייה בקטגוריה"
                 >
-                  #{translateToHebrew(recipe.categories.mainCategory)} # {translateToHebrew(recipe.categories.subCategory)}
+                  #{translateToHebrew(recipe.categories.mainCategory)} #{" "}
+                  {translateToHebrew(recipe.categories.subCategory)}
                 </Link>
                 <button
                   className="flex justify-center items-center text-gray-800"
@@ -139,7 +142,6 @@ const AllRecipes = () => {
                   <FaHeart className="text-2xl cursor-pointer hover:text-red-500" />
                 </button>
               </div>
-
             </div>
           </div>
         ))}

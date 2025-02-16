@@ -18,31 +18,36 @@ const LoginPage = () => {
     }
   }, [user, navigate]);
 
- // In LoginPage.jsx
-const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post(
-      `${API_SERVER_URL}/user/login`,
-      { email, password },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-    
-    const { user: loggedInUser, token } = response.data;
+  // In LoginPage.jsx
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${API_SERVER_URL}/user/login`,
+        { email, password },
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-    // Now this matches the login function's parameters
-    login(loggedInUser, token);
+      const { user: loggedInUser, token } = response.data;
 
-    navigate("/home");
-  } catch (err) {
-    console.error('Login error:', err.response || err);
-    if (err.response) {
-      setError(`Error: ${err.response.data.message || 'האימייל או הסיסמה אינם נכונים. נסה שוב.'}`);
-    } else {
-      setError("שגיאה בשרת. נסה שוב מאוחר יותר.");
+      // Now this matches the login function's parameters
+      login(loggedInUser, token);
+
+      navigate("/home");
+    } catch (err) {
+      console.error("Login error:", err.response || err);
+      if (err.response) {
+        setError(
+          `Error: ${
+            err.response.data.message ||
+            "האימייל או הסיסמה אינם נכונים. נסה שוב."
+          }`
+        );
+      } else {
+        setError("שגיאה בשרת. נסה שוב מאוחר יותר.");
+      }
     }
-  }
-};
+  };
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600">
       <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl w-full sm:w-96 transform transition-all duration-500 hover:scale-105 mt-8 mb-8">
@@ -52,7 +57,10 @@ const handleLogin = async (e) => {
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         <form onSubmit={handleLogin}>
           <div className="mb-6">
-            <label htmlFor="email" className="block text-lg font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-lg font-medium text-gray-700"
+            >
               אימייל
             </label>
             <input
@@ -66,7 +74,10 @@ const handleLogin = async (e) => {
             />
           </div>
           <div className="mb-6">
-            <label htmlFor="password" className="block text-lg font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-lg font-medium text-gray-700"
+            >
               סיסמה
             </label>
             <input
@@ -88,7 +99,10 @@ const handleLogin = async (e) => {
         </form>
         <div className="mt-6 text-center">
           <span className="text-gray-700">עדיין אין לך חשבון? </span>
-          <a href="/signup" className="text-teal-600 font-semibold hover:underline">
+          <a
+            href="/signup"
+            className="text-teal-600 font-semibold hover:underline"
+          >
             הירשם
           </a>
         </div>
