@@ -15,7 +15,7 @@ const userController = {
   },
 
   // פונקציה לבדוק אם המשתמש קיים
-  login: async (req, res) => {
+ login: async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await userService.getUserByEmail(email);
@@ -50,7 +50,7 @@ const userController = {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-}
+},
 
   getUserById: async (req, res) => {
     try {
