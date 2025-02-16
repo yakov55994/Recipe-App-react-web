@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           // שליחה של בקשה לשרת עם ה-token שנמצא ב-localStorage
-          const response = await axios.get('/user/profile', {
+          const response = await axios.get(`${API_SERVER_URL}/user/profile`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -36,23 +36,45 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // שליחת בקשה לשרת עם פרטי המשתמש
-      const response = await axios.post(`${API_SERVER_URL}/user/login`,
-        { email, password }, 
-        { withCredentials: true },);
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-      setToken(token);
-      // אם ההתחברות הצליחה
-      console.log(response?.data?.message); // "Login successful"
+        const response = await axios.post(
+            `${API_SERVER_URL}/user/login`, 
+            { email, password },
+            { 
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        const { token, user: loggedInUser } = response.data;
+        
+        if (!token || !loggedInUser) {
+            throw new Error('Invalid response from server');
+        }
+
+        // Set the token in axios defaults for future requests
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        // Store in localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(loggedInUser));
+        
+        // Update context
+        setToken(token);
+        setUser(loggedInUser);
+        
+        return { success: true };
     } catch (error) {
-      console.error('Login failed:', error?.response?.data?.message);
+        console.error('Login error:', error.response?.data || error.message);
+        throw error;
     }
-  };
+};
 
   const logout = () => {
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setToken('');
   };
 
   return (

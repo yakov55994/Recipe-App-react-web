@@ -20,30 +20,26 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
+    
     try {
-      const response = await axios.post(
-        `${API_SERVER_URL}/user/login`,
-        { email, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const { user: loggedInUser, token } = response.data; // שינוי שם המשתנה
-      localStorage.setItem("user", JSON.stringify(loggedInUser));
-
-      // עדכון `AuthContext`
-      login(loggedInUser, token);
-
-      // הפניה לדף הבית
-      navigate("/home");
+        await login(email, password);
+        navigate("/home");
     } catch (err) {
-      console.error(err);
-      setError("האימייל או הסיסמה אינם נכונים. נסה שוב.");
+        const errorMessage = err.response?.data?.message 
+            || err.message 
+            || 'An error occurred during login';
+            
+        setError(errorMessage);
+        
+        // Log detailed error for debugging
+        console.error('Login error details:', {
+            status: err.response?.status,
+            data: err.response?.data,
+            message: err.message
+        });
     }
-  };
+};
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600">

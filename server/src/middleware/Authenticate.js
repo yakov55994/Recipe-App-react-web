@@ -1,17 +1,35 @@
 import jwt from 'jsonwebtoken';
 
 const authenticate = (req, res, next) => {
-  const token = req.cookies.token; // קבלת ה-token מה-cookie
+    // Get the Authorization header
+    const authHeader = req.headers['authorization'];
+    
+    // Check if header exists
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Authorization header is missing' });
+    }
 
-  if (!token) return res.status(401).json({ message: 'Access denied, no token provided' });
+    // Check if it's a Bearer token
+    if (!authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Invalid token format' });
+    }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // אימות ה-token
-    req.user = decoded; // הוספת המשתמש
-    next();
-  } catch (error) {
-    res.status(400).json({ message: 'Invalid token' });
-  }
+    const token = authHeader.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'Token is missing' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ 
+            message: 'Invalid or expired token',
+            error: error.message 
+        });
+    }
 };
 
-export default authenticate ;
+export default authenticate;

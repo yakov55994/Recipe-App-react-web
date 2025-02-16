@@ -18,26 +18,37 @@ const userController = {
   login: async (req, res) => {
     const { email, password } = req.body;
     try {
-      const user = await userService.getUserByEmail(email);
-      if (!user) return res.status(404).json({ message: 'User not found' });
+        const user = await userService.getUserByEmail(email);
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
-      const isMatch = await user.matchPassword(password);
-      if (!isMatch) return res.status(400).json({ message: 'Invalid password' });
+        const isMatch = await user.matchPassword(password);
+        if (!isMatch) return res.status(400).json({ message: 'Invalid password' });
 
-      const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { _id: user._id, email: user.email }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
+        );
 
-      res.cookie('token', token, {
-        httpOnly: true,    // הגנה מ-JavaScript בצד הלקוח
-        secure: process.env.NODE_ENV === 'production', // מאובטח ב-https בסביבת פרודקשן
-        sameSite: 'Strict', // הגנה על ידי SameSite
-        maxAge: 3600000,    // זמן תוקף (שעה)
-      });
+        // שליחת ה-token גם ב-cookie וגם בגוף התגובה
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000,
+        });
 
-      res.status(200).json({ message: 'Login successful', user });
+        // שליחת ה-token בגוף התגובה
+        res.status(200).json({ 
+            message: 'Login successful', 
+            user,
+            token // הוספת ה-token לגוף התגובה
+        });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+        console.error('Login error:', error);
+        res.status(500).json({ message: error.message });
     }
-  },
+},
 
   getUserById: async (req, res) => {
     try {
