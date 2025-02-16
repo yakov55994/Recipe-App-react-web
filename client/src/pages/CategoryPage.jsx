@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { API_SERVER_URL } from "../api/api";
-import Loader from "../components/loader";
+import Loader from "../components/Loader";
 
 const CategoryPage = () => {
   const { categoryName } = useParams(); // מקבל את שם הקטגוריה מתוך ה-URL
@@ -48,9 +48,16 @@ const CategoryPage = () => {
             />
           </a>
           <div className="p-4">
-            <h5 className="mb-2 text-lg font-bold text-gray-800">{recipe.title}</h5>
-            <p className="text-gray-600 text-sm line-clamp-2">{recipe.description}</p>
-            <p>#{recipe.categories.mainCategory} - {recipe.categories.subCategory}</p>
+            <h5 className="mb-2 text-lg font-bold text-gray-800">
+              {recipe.title}
+            </h5>
+            <p className="text-gray-600 text-sm line-clamp-2">
+              {recipe.description}
+            </p>
+            <p>
+              #{recipe.categories.mainCategory} -{" "}
+              {recipe.categories.subCategory}
+            </p>
           </div>
         </div>
       ))}
