@@ -18,29 +18,31 @@ const LoginPage = () => {
     }
   }, [user, navigate]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError(''); // Clear previous errors
+ // In LoginPage.jsx
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post(
+      `${API_SERVER_URL}/user/login`,
+      { email, password },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
     
-    try {
-        await login(email, password);
-        navigate("/home");
-    } catch (err) {
-        const errorMessage = err.response?.data?.message 
-            || err.message 
-            || 'An error occurred during login';
-            
-        setError(errorMessage);
-        
-        // Log detailed error for debugging
-        console.error('Login error details:', {
-            status: err.response?.status,
-            data: err.response?.data,
-            message: err.message
-        });
-    }
-};
+    const { user: loggedInUser, token } = response.data;
 
+    // Now this matches the login function's parameters
+    login(loggedInUser, token);
+
+    navigate("/home");
+  } catch (err) {
+    console.error('Login error:', err.response || err);
+    if (err.response) {
+      setError(`Error: ${err.response.data.message || 'האימייל או הסיסמה אינם נכונים. נסה שוב.'}`);
+    } else {
+      setError("שגיאה בשרת. נסה שוב מאוחר יותר.");
+    }
+  }
+};
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600">
       <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl w-full sm:w-96 transform transition-all duration-500 hover:scale-105 mt-8 mb-8">
