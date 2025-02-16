@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { API_SERVER_URL } from "../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Loader from "../components/loader.jsx";
+import Loader from "../components/Loader.jsx";
 import { Tooltip } from "react-tooltip";
 import { FaHeart } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext.jsx";
