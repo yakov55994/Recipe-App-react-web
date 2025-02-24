@@ -1,17 +1,17 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { API_SERVER_URL } from "../api/api";
+import { API_SERVER_URL } from "../../api/api.js";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Loader from "../components/loader.jsx";
+import Loader from '../../components/Loader.jsx';
 import { Tooltip } from 'react-tooltip';
 import { FaHeart } from "react-icons/fa";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 
 const AllRecipes = () => {
 
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   const navigate = useNavigate();
   const { category } = useParams();

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 import axios from 'axios';
-import { API_SERVER_URL } from '../api/api.js';
+import { API_SERVER_URL } from '../../api/api.js';
 import { toast } from 'react-toastify';
 
 const SignUpPage = () => {
@@ -17,24 +17,24 @@ const SignUpPage = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-  
+
     if (password !== confirmPassword) {
       toast.error('סיסמאות אינן תואמות');
       return;
     }
-  
+
     try {
       const response = await axios.post(`${API_SERVER_URL}/user/register`, {
         username,
         email,
         password
       },
-       { 
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-    );
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
       toast.success("ההרשמה בוצעה בהצלחה")
       // login(response.data.user, response.data.token);
       navigate('/home');
@@ -43,7 +43,7 @@ const SignUpPage = () => {
       // setError('Error signing up. Please try again.');
     }
   };
-  
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600 ">

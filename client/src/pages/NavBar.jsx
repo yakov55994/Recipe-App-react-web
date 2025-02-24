@@ -1,21 +1,26 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthContext, useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 
 
 const NavBar = () => {
-  const { user, setUser, logout } = useContext(AuthContext);
+  const { user, isAuthenticated, logout } = useAuth();
 
   console.log("User ", user)
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const [hoverTimeout, setHoverTimeout] = useState(null);
+  const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
+
+  const confirmLogout = () => {
+    setShowLogoutConfirmation(true);
+  };
 
   const toggleDropdown = (menuType) => {
     setActiveMenu(activeMenu === menuType ? null : menuType);
@@ -128,145 +133,168 @@ const NavBar = () => {
 
   const LogOut = () => {
     logout();
-    navigate('./login')
+    toast.success('התנתקת בהצלחה !');
+    setShowLogoutConfirmation(false);
+    navigate('/login')
   };
-  // console.log("User in localStorage:", localStorage.getItem("user"));
+
+  const cancelLogout = () => {
+    setShowLogoutConfirmation(false);
+  };
 
   return (
-    <nav className="bg-gray-800 text-white relative z-40" dir="rtl">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between">
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <button
-              onClick={toggleMobileMenu}
-              className="p-2 rounded-md text-gray-400 hover:bg-gray-700 hover:text-white"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-16 6h16"}
-                />
-              </svg>
-            </button>
+    <>
+      <nav className="bg-gray-800 text-white relative z-40" dir="rtl">
+        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div className="relative flex h-16 items-center justify-between">
+            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+              <button
+                onClick={toggleMobileMenu}
+                className="p-2 rounded-md text-gray-400 hover:bg-gray-700 hover:text-white"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-16 6h16"}
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="hidden sm:flex flex-1 items-center justify-between">
+
+              <div className="flex ml-auto space-x-4">
+                <Link to="/Home" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+                  🏠 בית
+                </Link>
+                <Link to="/PersonalArea" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+                  🧍 איזור אישי
+                </Link>
+
+                {renderDropdownMenu('dairy')}
+                {renderDropdownMenu('parve')}
+                {renderDropdownMenu('meat')}
+
+                <Link to="/AllRecipes" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+                  📝 כל המתכונים
+                </Link>
+                <Link to="/CreateRecipe" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+                  📝 יצירת מתכון
+                </Link>
+                {!isAuthenticated? (
+                  <Link to="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+                    <IoPersonCircleSharp className="size-7 mt-1 mr-3" />
+                    <p className='font-bold text-yellow-300'>התחבר</p>
+                  </Link>
+                ) : (
+                  <button onClick={confirmLogout} className="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+                    <RiLogoutBoxRFill className="size-7 mt-1" />
+                    התנתק
+                  </button>
+                )}
+
+                {showLogoutConfirmation && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-md shadow-lg w-80">
+                      <h3 className="text-l text-black font-bold text-center">האם אתה בטוח שברצונך להתנתק?</h3>
+                      <div className="flex justify-between mt-4">
+                        <button onClick={LogOut} className="bg-red-600 text-white px-4 py-2 rounded-md">כן</button>
+                        <button onClick={cancelLogout} className="bg-gray-300 text-black px-4 py-2 rounded-md">לא</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+            </div>
           </div>
 
-          <div className="hidden sm:flex flex-1 items-center justify-between">
-            <h3 className="text-black bg-amber-200 rounded h-7 w-9 text-center">בס"ד</h3>
-
-            <div className="flex ml-auto space-x-4">
-              <Link to="/Home" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+          {isMobileMenuOpen && (
+            <div className="sm:hidden px-2 pt-2 pb-3 space-y-1">
+              <Link to="/Home" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
                 🏠 בית
               </Link>
-              <Link to="/PersonalArea" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+              <Link to="/PersonalArea" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
                 🧍 איזור אישי
               </Link>
 
-              {renderDropdownMenu('dairy')}
-              {renderDropdownMenu('parve')}
-              {renderDropdownMenu('meat')}
+              <div className="space-y-2">
+                {['dairy', 'fur', 'meat'].map((menuType) => (
+                  <div key={menuType} className="relative">
+                    <button
+                      data-menu-trigger
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDropdown(menuType);
+                      }}
+                      className={`w-full text-right px-3 py-2 text-base font-medium rounded-md ${activeMenu === menuType ? 'bg-gray-700' : 'hover:bg-gray-700'
+                        }`}
+                    >
+                      {menuType === 'dairy' && '🍕 מתכונים חלבי'}
+                      {menuType === 'parve' && '🍲 מתכונים פרווה'}
+                      {menuType === 'meat' && '🍖 מתכונים בשרי'}
+                      {activeMenu === menuType ? " ▲" : " ▼"}
+                    </button>
+                    {activeMenu === menuType && (
+                      <div className="mr-4 space-y-1 bg-gray-700 rounded-md mt-1">
+                        {menuType === 'dairy' && (
+                          <>
+                            <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🥛 פסטה ברוטב שמנת
+                            </Link>
+                            <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🧀 פיצה
+                            </Link>
+                            <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🥪 לזניה
+                            </Link>
+                          </>
+                        )}
+                        {menuType === 'parve' && (
+                          <>
+                            <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🥗 סלט ירקות
+                            </Link>
+                            <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🥬 מרק ירקות
+                            </Link>
+                            <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🍚 אורז מוקפץ
+                            </Link>
+                          </>
+                        )}
+                        {menuType === 'meat' && (
+                          <>
+                            <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🥩 שניצל
+                            </Link>
+                            <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🍗 עוף בתנור
+                            </Link>
+                            <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
+                              🥘 קציצות בשר
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
 
-              <Link to="/AllRecipes" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
+              <Link to="/AllRecipes" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
                 📝 כל המתכונים
               </Link>
-              <Link to="/CreateRecipe" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
-                📝 יצירת מתכון
-              </Link>
-              {user != null && user != undefined ? (
-                <button onClick={LogOut}>
-                  <RiLogoutBoxRFill className="size-7 mt-1" />
-                </button>
-              ) : (
-                <Link to="/login">
-                  <IoPersonCircleSharp className="size-7 mt-1" />
-                </Link>
-              )}
-
             </div>
-          </div>
+          )}
+
         </div>
-
-        {isMobileMenuOpen && (
-          <div className="sm:hidden px-2 pt-2 pb-3 space-y-1">
-            <Link to="/Home" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
-              🏠 בית
-            </Link>
-            <Link to="/PersonalArea" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
-              🧍 איזור אישי
-            </Link>
-
-            <div className="space-y-2">
-              {['dairy', 'fur', 'meat'].map((menuType) => (
-                <div key={menuType} className="relative">
-                  <button
-                    data-menu-trigger
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleDropdown(menuType);
-                    }}
-                    className={`w-full text-right px-3 py-2 text-base font-medium rounded-md ${activeMenu === menuType ? 'bg-gray-700' : 'hover:bg-gray-700'
-                      }`}
-                  >
-                    {menuType === 'dairy' && '🍕 מתכונים חלבי'}
-                    {menuType === 'parve' && '🍲 מתכונים פרווה'}
-                    {menuType === 'meat' && '🍖 מתכונים בשרי'}
-                    {activeMenu === menuType ? " ▲" : " ▼"}
-                  </button>
-                  {activeMenu === menuType && (
-                    <div className="mr-4 space-y-1 bg-gray-700 rounded-md mt-1">
-                      {menuType === 'dairy' && (
-                        <>
-                          <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🥛 פסטה ברוטב שמנת
-                          </Link>
-                          <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🧀 פיצה
-                          </Link>
-                          <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🥪 לזניה
-                          </Link>
-                        </>
-                      )}
-                      {menuType === 'parve' && (
-                        <>
-                          <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🥗 סלט ירקות
-                          </Link>
-                          <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🥬 מרק ירקות
-                          </Link>
-                          <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🍚 אורז מוקפץ
-                          </Link>
-                        </>
-                      )}
-                      {menuType === 'meat' && (
-                        <>
-                          <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🥩 שניצל
-                          </Link>
-                          <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🍗 עוף בתנור
-                          </Link>
-                          <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                            🥘 קציצות בשר
-                          </Link>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <Link to="/AllRecipes" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
-              📝 כל המתכונים
-            </Link>
-          </div>
-        )}
-      </div>
-    </nav>
+      </nav>
+      <h3 className="text-black font-bold mt-2 mr-2">בס"ד</h3>
+    </>
   );
 };
 

@@ -1,48 +1,62 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { API_SERVER_URL } from "../api/api.js";
-import { AuthContext, useAuth } from "../context/AuthContext.jsx";
+import { API_SERVER_URL } from "../../api/api.js";
+import { useAuth } from '../../context/AuthContext.jsx';
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { user, login } = useAuth(); // קבלת פונקציית `login` מהקונטקסט
   const navigate = useNavigate();
 
-  // אם המשתמש כבר מחובר, הפנה אותו לדף הבית
+  //   if (user) {
+  //     navigate("/home");
+  //     toast.info('אתה כבר מחובר !')
+  //     return;
+  //   }
   useEffect(() => {
-    if (user) {
+    const token = localStorage.getItem("token");
+    if (token || user) {
+      // alert(`User ${user}` + "מחובר")
       navigate("/home");
     }
-  }, [user, navigate]);
+  }, [user]);
 
- // In LoginPage.jsx
-const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post(
-      `${API_SERVER_URL}/user/login`,
-      { email, password },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-    
-    const { user: loggedInUser, token } = response.data;
 
-    // Now this matches the login function's parameters
-    login(loggedInUser, token);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-    navigate("/home");
-  } catch (err) {
-    console.error('Login error:', err.response || err);
-    if (err.response) {
-      setError(`Error: ${err.response.data.message || 'האימייל או הסיסמה אינם נכונים. נסה שוב.'}`);
-    } else {
-      setError("שגיאה בשרת. נסה שוב מאוחר יותר.");
+    try {
+      const response = await axios.post(
+        `${API_SERVER_URL}/user/login`,
+        { email, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      const { user, token } = response.data;
+
+      await login(user, token); // חכה שהפעולה תסתיים
+
+      console.log("localStorage.user ", localStorage.getItem('user'))
+      toast.success('התחברת בהצלחה !');
+      console.log("Login successful:", user);
+      navigate("/home");
+    } catch (err) {
+      toast.error('ההתחברות נכשלה. אנא בדוק את פרטי ההתחברות שלך');
+      setError('פרטי ההתחברות שגויים'); // הוספת הודעת שגיאה למשתמש
+      console.error("Login error:", err.response?.data?.message || err.message);
+    } finally {
+      setIsLoading(false);
     }
-  }
-};
+  };
+
+
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600">
       <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl w-full sm:w-96 transform transition-all duration-500 hover:scale-105 mt-8 mb-8">
@@ -81,16 +95,18 @@ const handleLogin = async (e) => {
           </div>
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105"
           >
-            התחבר
+            {isLoading ? 'מתחבר...' : 'התחבר'}
+
           </button>
         </form>
         <div className="mt-6 text-center">
           <span className="text-gray-700">עדיין אין לך חשבון? </span>
-          <a href="/signup" className="text-teal-600 font-semibold hover:underline">
+          <Link href="/signup" className="text-teal-600 font-semibold hover:underline">
             הירשם
-          </a>
+          </Link>
         </div>
       </div>
     </div>

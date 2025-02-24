@@ -1,43 +1,44 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
-import { API_SERVER_URL } from '../api/api';
+import { createContext, useContext, useState, useEffect } from "react";
 
+// יצירת הקונטקסט והגדרתו כקבוע מיוצא
+export const AuthContext = createContext();
+
+// הגדרת ה-Provider
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-  // Changed the login function to match how it's called in LoginPage
-  const login = async (loggedInUser, token) => {  // Changed parameters to match what LoginPage sends
-    try {
-      // Store the token and user in localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(loggedInUser));
-      
-      // Update state
-      setToken(token);
-      setUser(loggedInUser);
-      
-      // Set the default authorization header for future requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      setUser(userData);
     }
+  }, []);
+
+  const login = (userData, token) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
-    setToken('');
-    // Clear the authorization header
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+// יצירת והגדרת ה-Hook
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

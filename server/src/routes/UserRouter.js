@@ -8,7 +8,9 @@ const router = express.Router();
 router.post('/register', userController.register);
 
 // בקשת התחברות
-router.post('/login', authenticate, userController.login);
+router.post('/login', userController.login);
+
+router.put("/update-password", authenticate, userController.updatePassword);
 
 router.get('/:id', userController.getUserById);
 

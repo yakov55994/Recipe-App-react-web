@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { API_SERVER_URL } from "../api/api.js";
-import { useAuth } from '../context/AuthContext.jsx';
+import { API_SERVER_URL } from "../../api/api.js";
+import { useAuth } from '../../context/AuthContext.jsx';
 
 
 const RecipeDetails = () => {
@@ -37,7 +37,7 @@ const RecipeDetails = () => {
   if (!recipe) {
     return <h1>המתכון לא נמצא</h1>;
   }
-  
+
 
   return (
     <>

@@ -1,5 +1,6 @@
 import User from '../models/UserModel.js';  // Corrected import
 import RecipeService from './recipeService.js';  // Ensure this import is correct
+import bcrypt from 'bcrypt';
 
 const userService = {
   registerUser: async (username, email, password) => {
@@ -13,6 +14,11 @@ const userService = {
 
   getUserByEmail: async (email) => {
     return await User.findOne({ email });
+  },
+
+  updateUserPassword: async (userId, newPassword) => {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await User.findByIdAndUpdate(userId, { password: hashedPassword });
   },
 
   getUserById: async (userId) => {

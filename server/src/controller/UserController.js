@@ -32,7 +32,7 @@ const userController = {
         const token = jwt.sign(
             { _id: user._id, email: user.email },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '1m' }
         );
 
         // Send response with both token and user
@@ -50,6 +50,20 @@ const userController = {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+},
+
+updatePassword: async(req, res) => {
+  try {
+    const { password } = req.body;
+    const userId = req.user._id; // מזהה המשתמש מה-Token
+
+    await userService.updateUserPassword(userId, password);
+
+    res.json({ message: "סיסמה עודכנה בהצלחה!" });
+  } catch (error) {
+    console.error("❌ שגיאה בעדכון הסיסמה:", error);
+    res.status(500).json({ error: "שגיאה בעדכון הסיסמה" });
+  }
 },
 
   getUserById: async (req, res) => {
@@ -99,8 +113,7 @@ const userController = {
   deleteFavoriteRecipe: async (req, res) => {
     try {
       // console.log(req.user);
-      const {userId} = req.body; // מזהה המשתמש מתוך ה-Token
-      const { recipeId } = req.params;
+      const { recipeId, userId } = req.params;
   
       const result = await userService.removeFavoriteRecipe (userId, recipeId);
       

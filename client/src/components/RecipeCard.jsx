@@ -5,10 +5,10 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "./Loader.jsx";
 import { FaHeart } from "react-icons/fa";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { useAuth } from '../context/AuthContext.jsx'
 
 const RecipeCard = ({ mainCategory, subCategory }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
