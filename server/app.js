@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-    origin: 'http://localhost:5173', // כתובת הלקוח שלך
+    origin: 'https://recipe-app-server-ycy3.onrender.com', // כתובת הלקוח שלך
     methods: 'GET,POST,PUT,DELETE', // שיטות HTTP מותרות
     allowedHeaders: 'Content-Type, Authorization', // כותרות מותרים
     credentials: true, // חשוב להוסיף את זה כדי לאפשר שליחה של cookies
