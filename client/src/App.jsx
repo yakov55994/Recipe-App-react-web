@@ -38,9 +38,9 @@ export default function App() {
           <AuthProvider>
             <Routes>
 
+              {/* <Route path="/*" element={<Home />} /> */}
               <Route path="/" element={<Home />} />
-              <Route path="/Home" element={<Home />} />
-              <Route path="/Search" element={<Search />} />
+              {/* <Route path="/Search" element={<Search />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/PersonalArea" element={<PersonalArea />} />
@@ -62,7 +62,7 @@ export default function App() {
               <Route path="/RecipeDetails/:id" element={<RecipeDetails />} />
               <Route path="/category/:categoryName" element={<CategoryPage />} />
               <Route path="/productsIliked" element={<ProductsIliked />} />
-              <Route path="/editRecipe/:recipeId" element={<EditRecipe />} />
+              <Route path="/editRecipe/:recipeId" element={<EditRecipe />} /> */}
 
 
             </Routes>
