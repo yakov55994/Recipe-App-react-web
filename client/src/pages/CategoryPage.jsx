@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { API_SERVER_URL } from "../api/api";
-import Loader from "../components/loader";
+import Loader from "../components/Loader.jsx";
 
 const CategoryPage = () => {
   const { categoryName } = useParams(); // מקבל את שם הקטגוריה מתוך ה-URL
