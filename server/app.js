@@ -18,7 +18,7 @@ const corsOptions = {
     credentials: true, // חשוב להוסיף את זה כדי לאפשר שליחה של cookies
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 
 app.use("/api/recipe", recipeRoute);
