@@ -22,7 +22,7 @@ export default function NavBarDemo() {
 
   
   const navItems = [
-    { name: "דף הבית", url: "/home", icon: Home },
+    { name: "דף הבית", url: "/", icon: Home },
     { name: "כל המתכונים", url: "/AllRecipes", icon: Briefcase },
     // תמיד מציגים את קישור "יצירת מתכון"
     { name: "יצירת מתכון", url: "/CreateRecipe", icon:AlignHorizontalDistributeStart },
