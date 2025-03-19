@@ -1,44 +1,71 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-// יצירת הקונטקסט והגדרתו כקבוע מיוצא
 export const AuthContext = createContext();
 
-// הגדרת ה-Provider
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const userData = JSON.parse(localStorage.getItem("user"));
-      setUser(userData);
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    if (storedToken && storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+      } catch (error) {
+        console.error("❌ שגיאה בפריסת המשתמש:", error);
+        localStorage.removeItem("user");
+      }
     }
   }, []);
 
   const login = (userData, token) => {
+    setUser(userData);
+    setToken(token);
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
+
+    // שדר אירוע שהמשתמש השתנה
+    window.dispatchEvent(new Event("storage"));
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
+    setToken(null);
+
+    // שדר אירוע כדי שהקומפוננטים ידעו שהמשתמש התנתק
+    window.dispatchEvent(new Event("storage"));
   };
 
+  // הקשבה לאירוע שינוי ב-LocalStorage כדי לעדכן קומפוננטים
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedUser = localStorage.getItem("user");
+      if (updatedUser) {
+        setUser(JSON.parse(updatedUser));
+      } else {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// יצירת והגדרת ה-Hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

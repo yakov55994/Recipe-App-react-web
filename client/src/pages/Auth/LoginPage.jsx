@@ -3,35 +3,39 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_SERVER_URL } from "../../api/api.js";
 import { useAuth } from '../../context/AuthContext.jsx';
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { user, login } = useAuth(); // קבלת פונקציית `login` מהקונטקסט
+
+  const { user, login } = useAuth();
+
   const navigate = useNavigate();
-
-  //   if (user) {
-  //     navigate("/home");
-  //     toast.info('אתה כבר מחובר !')
-  //     return;
-  //   }
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token || user) {
-      // alert(`User ${user}` + "מחובר")
-      navigate("/home");
-    }
-  }, [user]);
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+
+      const adminCheckResponse = await axios.post(
+        `${API_SERVER_URL}/user/check-admin`,
+        { email },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+  
+      // if (adminCheckResponse.data.role === 'admin') {
+      //   const confirmAdmin = window.confirm("נראה שאתה מנהל. האם להמשיך כהתחברות מנהל?");
+      //   if (!confirmAdmin) {
+      //     setIsLoading(false);
+      //     return;
+      //   }
+      // }
+  
+      
       const response = await axios.post(
         `${API_SERVER_URL}/user/login`,
         { email, password },
@@ -40,15 +44,22 @@ const LoginPage = () => {
 
       const { user, token } = response.data;
 
-      await login(user, token); // חכה שהפעולה תסתיים
+      // עדכון מצב המשתמש
+      await login(user, token);
 
-      console.log("localStorage.user ", localStorage.getItem('user'))
-      toast.success('התחברת בהצלחה !');
-      console.log("Login successful:", user);
-      navigate("/home");
+      // תזמן קצר כדי לאפשר לעדכון להתבצע לפני שממשיכים
+      setTimeout(() => {
+        // פרסם אירוע מותאם אישית להודיע על התחברות
+        window.dispatchEvent(new Event('userLoggedIn'));
+
+        toast.success('התחברת בהצלחה !');
+        console.log("Login successful:", user);
+        navigate("/home");
+      }, 100);
+
     } catch (err) {
       toast.error('ההתחברות נכשלה. אנא בדוק את פרטי ההתחברות שלך');
-      setError('פרטי ההתחברות שגויים'); // הוספת הודעת שגיאה למשתמש
+      setError('פרטי ההתחברות שגויים');
       console.error("Login error:", err.response?.data?.message || err.message);
     } finally {
       setIsLoading(false);
@@ -56,9 +67,8 @@ const LoginPage = () => {
   };
 
 
-
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-teal-400 to-cyan-600">
+    <div className="mt-32 flex justify-center items-center min-h-screen bg-gradient-to-r ">
       <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl w-full sm:w-96 transform transition-all duration-500 hover:scale-105 mt-8 mb-8">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-6 sm:mb-8">
           דף התחברות
@@ -96,15 +106,14 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105"
+            className="w-full py-3 bg-gradient-to-r  bg-gray-900 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105"
           >
             {isLoading ? 'מתחבר...' : 'התחבר'}
-
           </button>
         </form>
         <div className="mt-6 text-center">
           <span className="text-gray-700">עדיין אין לך חשבון? </span>
-          <Link href="/signup" className="text-teal-600 font-semibold hover:underline">
+          <Link to="/signup" href="/signup" className="text-teal-600 font-semibold hover:underline">
             הירשם
           </Link>
         </div>

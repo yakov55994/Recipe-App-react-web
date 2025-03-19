@@ -5,4 +5,7 @@ const router = express.Router();
 
 router.get('/',SearchController.search)
 
+router.post('/AI',SearchController.searchRecipeFromAI)
+
+
 export default router;

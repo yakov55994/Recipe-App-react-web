@@ -1,47 +1,73 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from "react";
 import { API_SERVER_URL } from "../api/api.js";
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext.jsx'
-import { useParams, useNavigate } from 'react-router-dom';
-import Loader from '../components/Loader.jsx';
-import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode'; // יש לוודא שהוא מותקן
+import axios from "axios";
+import { useAuth } from "../context/AuthContext.jsx";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
+import { TbListDetails } from "react-icons/tb";
+import { FiEdit, FiSave, FiX } from "react-icons/fi";
 
 const PersonalArea = () => {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [newPassword, setNewPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
+  // State for user data editing
+  const [editMode, setEditMode] = useState({
+    username: false,
+    fullName: false,
+    email: false,
+    password: false,
+  });
+
+  // State for form data
+  const [formData, setFormData] = useState({
+    username: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const { user, setUser } = useAuth();
   const { category } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
         setUser(decodedUser);
 
         // שליפת פרטי המשתמש המלאים מהשרת
-        axios.get(`${API_SERVER_URL}/user/${decodedUser._id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }).then(response => {
-          setUser(response.data); // עדכון הנתונים בקונטקסט
-        }).catch(err => {
-          console.error("❌ שגיאה בשליפת פרטי המשתמש:", err);
-        });
-
+        axios
+          .get(`${API_SERVER_URL}/user/${decodedUser._id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((response) => {
+            setUser(response.data); // עדכון הנתונים בקונטקסט
+            // Initialize form data with user data
+            setFormData({
+              username: response.data.username || "",
+              firstName: response.data.firstName || "",
+              lastName: response.data.lastName || "",
+              email: response.data.email || "",
+              password: "",
+            });
+          })
+          .catch((err) => {
+            console.error("❌ שגיאה בשליפת פרטי המשתמש:", err);
+          });
       } catch (error) {
-        console.error('❌ שגיאה בפענוח הטוקן:', error);
-        localStorage.removeItem('token');
+        console.error("❌ שגיאה בפענוח הטוקן:", error);
+        localStorage.removeItem("token");
       }
     }
   }, [setUser]);
-
 
   useEffect(() => {
     if (!user?._id) {
@@ -52,11 +78,14 @@ const PersonalArea = () => {
     const fetchFavorites = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_SERVER_URL}/user/${user._id}/favorites`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // שולחים את הטוקן לבקשה
-          },
-        });
+        const response = await axios.get(
+          `${API_SERVER_URL}/user/${user._id}/favorites`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         setFavorites(response.data);
       } catch (err) {
         setError(err.response?.data?.message || "שגיאה בטעינת המועדפים");
@@ -72,17 +101,129 @@ const PersonalArea = () => {
 
   const handleDeleteRecipe = async (favorite) => {
     try {
-      await axios.delete(`${API_SERVER_URL}/user/${userId}/favorites/${favorite._id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      
+      await axios.delete(
+        `${API_SERVER_URL}/user/${userId}/favorites/${favorite._id}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
 
       setFavorites(favorites.filter((fav) => fav._id !== favorite._id));
       toast.success("המתכון נמחק מהמועדפים בהצלחה!");
     } catch (error) {
-      console.error("❌ שגיאה במחיקת המתכון:", error.response?.data || error.message);
-      toast.error(`❌ שגיאה: ${error.response?.data?.message || error.message}`);
+      console.error(
+        "❌ שגיאה במחיקת המתכון:",
+        error.response?.data || error.message
+      );
+      toast.error(
+        `❌ שגיאה: ${error.response?.data?.message || error.message}`
+      );
     }
+  };
+
+  // Toggle edit mode for a specific field
+  const toggleEditMode = (field) => {
+    setEditMode((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+
+    // Reset form data to current user data when canceling edit
+    if (editMode[field]) {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: user[field] || "",
+      }));
+    }
+  };
+
+  // Handle form field changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Save changes for a specific field
+  const handleSave = async (field) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("נא להתחבר מחדש");
+        return;
+      }
+
+      // Skip if no changes were made
+      if (field !== "password" && formData[field] === user[field]) {
+        toggleEditMode(field);
+        return;
+      }
+
+      // Skip if field is empty
+      if (!formData[field]) {
+        toast.error(`שדה ${field} לא יכול להיות ריק`);
+        return;
+      }
+
+      // Different endpoint for password update
+      const endpoint =
+        field === "password"
+          ? `${API_SERVER_URL}/user/${userId}/update-password`
+          : `${API_SERVER_URL}/user/${userId}/updateProfile`;
+
+      // Different payload based on field
+      const payload =
+        field === "password"
+          ? { password: formData.password }
+          : { [field]: formData[field] };
+
+      const response = await axios.put(endpoint, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Update user state if not password
+      if (field !== "password") {
+        setUser((prev) => ({
+          ...prev,
+          [field]: formData[field],
+        }));
+      }
+
+      toast.success(`${getFieldLabel(field)} עודכן בהצלחה!`);
+
+      // Clear password field after update
+      if (field === "password") {
+        setFormData((prev) => ({
+          ...prev,
+          password: "",
+        }));
+      }
+
+      toggleEditMode(field);
+    } catch (error) {
+      console.error(`❌ שגיאה בעדכון ${field}:`, error);
+
+      if (error.response && error.response.data.error === "jwt expired") {
+        toast.error("⏳ תוקף ההתחברות פג, נא להתחבר מחדש");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        toast.error(`❌ שגיאה בעדכון ${getFieldLabel(field)}`);
+      }
+    }
+  };
+
+  // Helper function to get Hebrew field labels
+  const getFieldLabel = (field) => {
+    const labels = {
+      username: "שם משתמש",
+      fullName: "שם מלא",
+      email: "כתובת מייל",
+      password: "סיסמה",
+    };
+    return labels[field] || field;
   };
 
   if (!user) {
@@ -95,110 +236,139 @@ const PersonalArea = () => {
       </div>
     );
   }
-
-  const handleUpdatePassword = async () => {
-    if (!newPassword) {
-      toast.error("נא להזין סיסמה חדשה");
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("נא להתחבר מחדש");
-        return;
-      }
-
-      await axios.put(
-        `${API_SERVER_URL}/user/update-password`,
-        { password: newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      toast.success("✅ הסיסמה עודכנה בהצלחה!");
-      setNewPassword("");
-    } catch (error) {
-      console.error("❌ שגיאה בעדכון הסיסמה:", error);
-
-      if (error.response && error.response.data.error === "jwt expired") {
-        toast.error("⏳ תוקף ההתחברות פג, נא להתחבר מחדש");
-        localStorage.removeItem("token");
-        navigate("/login"); // הפניה למסך התחברות
-      } else {
-        toast.error("❌ שגיאה בעדכון הסיסמה");
-      }
-    }
-  };
-
-
-
-  console.log("user ", user);
-
-
   return (
     <div>
-      <h1 className="text-center text-6xl mb-6 mt-10">האיזור האישי 📇</h1>
+      <div className='flex justify-center items-center mt-20'>
+        <div className='bg-slate-300 max-w-4xl p-20 rounded-xl mb-20'>
+          <h1 className='text-amber-800 font-thin text-5xl text-center mb-14'>הפרטים שלי</h1>
 
-      <div className='bg-slate-500'>
-        <h1 className=' text-white font-thin text-xl'>הפרטים שלי :</h1>
-        <p className='text-xl'>שם משתמש: {user.username}</p>
-        <p className='text-xl'>כתובת מייל: {user.email}</p>
-        <div className="relative mt-4">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="הכנס סיסמה חדשה"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="border rounded-lg p-2 w-full text-xl"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-700"
-          >
-            {showPassword ? "👁️" : "🙈"}
-          </button>
-        </div>
-        <button
-          onClick={handleUpdatePassword}
-          className="mt-2 bg-blue-500 text-white p-2 rounded-lg"
-        >
-          עדכן סיסמה
-        </button>
-
-
-      </div>
-
-      <h2 className="text-2xl mb-4 text-center">המתכונים שאהבתי</h2>
-
-      {favorites.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 text-center">
-          {favorites.map((favorite) => (
-            <div key={favorite._id} className="border rounded-lg p-4 shadow-md">
-              {/* {console.log("favorite: ", favorite)} */}
-              <h3 className="text-xl font-bold mb-2">{favorite.title}</h3>
-              {favorite.imageUrl && (
-                <img
-                  src={favorite.imageUrl}
-                  alt={favorite.title}
-                  onClick={() => navigate(`/${favorite.categories.mainCategory}/RecipeDetails/${favorite._id}`)}
-                  className="w-full h-48 object-cover rounded-md mb-2 cursor-pointer"
-                />
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            {/* First Name Field */}
+            <div className='mb-2 bg-lime-950 p-7 rounded-full text-amber-400'>
+              <div className='flex items-center justify-between'>
+                <p className='text-2xl'>שם פרטי:</p>
+                <button
+                  onClick={() => toggleEditMode('firstName')}
+                  className={`p-2 rounded-full ${editMode.firstName ? 'bg-red-400' : 'bg-blue-400'} text-white`}
+                >
+                  {editMode.firstName ? <FiX /> : <FiEdit />}
+                </button>
+              </div>
+              {editMode.firstName ? (
+                <div className='flex items-center'>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="border rounded-lg p-2 w-full text-xl"
+                  />
+                  <button
+                    onClick={() => handleSave('firstName')}
+                    className="mr-2 p-2 rounded-full bg-green-500 text-white"
+                  >
+                    <FiSave />
+                  </button>
+                </div>
+              ) : (
+                <span className='text-xl font-bold'>{user.firstName}</span>
               )}
-              <button
-                className="rounded-xl bg-red-500 font-bold p-2 hover:bg-red-300"
-                onClick={() => handleDeleteRecipe(favorite)}
-              >
-                מחק מהאהובים
-              </button>
             </div>
-          ))}
+
+            {/* Last Name Field */}
+            <div className='mb-2 bg-lime-950 p-7 rounded-full text-amber-400'>
+              <div className='flex items-center justify-between'>
+                <p className='text-2xl'>שם משפחה:</p>
+                <button
+                  onClick={() => toggleEditMode('lastName')}
+                  className={`p-2 rounded-full ${editMode.lastName ? 'bg-red-400' : 'bg-blue-400'} text-white`}
+                >
+                  {editMode.lastName ? <FiX /> : <FiEdit />}
+                </button>
+              </div>
+              {editMode.lastName ? (
+                <div className='flex items-center'>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="border rounded-lg p-2 w-full text-xl"
+                  />
+                  <button
+                    onClick={() => handleSave('lastName')}
+                    className="mr-2 p-2 rounded-full bg-green-500 text-white"
+                  >
+                    <FiSave />
+                  </button>
+                </div>
+              ) : (
+                <span className='text-xl font-bold'>{user.lastName}</span>
+              )}
+            </div>
+            <div className='mb-2 bg-lime-950 p-7 rounded-full text-amber-400'>
+              <div className='flex items-center justify-between'>
+                <p className='text-2xl'>המייל שלי :</p>
+                <button
+                  onClick={() => toggleEditMode('email')}
+                  className={`p-2 rounded-full ${editMode.email ? 'bg-red-400' : 'bg-blue-400'} text-white`}
+                >
+                  {editMode.email ? <FiX /> : <FiEdit />}
+                </button>
+              </div>
+              {editMode.email ? (
+                <div className='flex items-center'>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="border rounded-lg p-2 w-full text-xl"
+                  />
+                  <button
+                    onClick={() => handleSave('email')}
+                    className="mr-2 p-2 rounded-full bg-green-500 text-white"
+                  >
+                    <FiSave />
+                  </button>
+                </div>
+              ) : (
+                <span className='text-xl font-bold'>{user.email}</span>
+              )}
+            </div>
+            <div className='mb-2 bg-lime-950 p-7 rounded-full text-amber-400'>
+              <div className='flex items-center justify-between'>
+                <p className='text-2xl'>סיסמה:</p>
+                <button
+                  onClick={() => toggleEditMode('password')}
+                  className={`p-2 rounded-full ${editMode.password ? 'bg-red-400' : 'bg-blue-400'} text-white`}
+                >
+                  {editMode.password ? <FiX /> : <FiEdit />}
+                </button>
+              </div>
+              {editMode.password ? (
+                <div className='flex items-center'>
+                  <input
+                    type="text"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="border rounded-lg p-2 w-full text-xl"
+                  />
+                  <button
+                    onClick={() => handleSave('password')}
+                    className="mr-2 p-2 rounded-full bg-green-500 text-white"
+                  >
+                    <FiSave />
+                  </button>
+                </div>
+              ) : (
+                <span className='text-xl font-bold'>●●●●●●</span>
+              )}
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="text-center text-gray-500 p-4">
-          <h3>עדיין לא הוספתם מתכונים למועדפים</h3>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

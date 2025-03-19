@@ -1,301 +1,141 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useAuth } from '../context/AuthContext.jsx';
-import { IoPersonCircleSharp } from "react-icons/io5";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useAuth } from "../context/AuthContext.jsx";
 import { RiLogoutBoxRFill } from "react-icons/ri";
+import { Home, User, Briefcase, FileText, Heart } from "lucide-react";
+import { GiCookingPot } from "react-icons/gi";
+import Search from "./Search/Search.jsx";
+import NavBar from "../components/ui/navbar.jsx";
 
-
-const NavBar = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-
-  console.log("User ", user)
-  const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState(null);
-  const [hoverTimeout, setHoverTimeout] = useState(null);
+export default function NavBarDemo() {
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [dropdownTimeout, setDropdownTimeout] = useState(null); 
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
-  const confirmLogout = () => {
-    setShowLogoutConfirmation(true);
-  };
+  // עדכון isLoggedIn על פי ה-user
+  const isLoggedIn = !!user; // אם יש משתמש, אז הוא מחובר
 
-  const toggleDropdown = (menuType) => {
-    setActiveMenu(activeMenu === menuType ? null : menuType);
-  };
-
-  const handleMouseEnter = (menuType) => {
-    clearTimeout(hoverTimeout); // מניחים את עיכוב ה-hover קודם
-    setActiveMenu(menuType);
-  };
-
-  const handleMouseLeave = () => {
-    const timeoutId = setTimeout(() => {
-      setActiveMenu(null);
-    }, 300); // עיכוב של 300 מילישניות לפני שהקולפום ייסגר
-    setHoverTimeout(timeoutId);
-  };
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const isMenuButton = event.target.closest('button[data-menu-trigger]');
-      if (!isMenuButton) {
-        const dropdown = document.getElementById('dropdownMenu');
-        if (dropdown && !dropdown.contains(event.target)) {
-          setActiveMenu(null);
-        }
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
-  const renderDropdownMenu = (menuType) => {
-    const menuItems = {
-      dairy: {
-        title: '🧀 מתכונים חלבי',
-        items: [
-          { to: '/DairyDishes', icon: '🍕', text: 'מנות' },
-          { to: '/DairyDesserts', icon: '🍰', text: 'קינוחים' },
-        ]
-      },
-      parve: {
-        title: '🍲 מתכונים פרווה',
-        items: [
-          { to: '/FurDishes', icon: '🥗', text: 'מנות' },
-          { to: '/FurDesserts', icon: '🥬', text: 'קינוחים' },
-          { to: '/FurSoups', icon: '🍚', text: 'מרקים' }
-        ]
-      },
-      meat: {
-        title: '🍖 מתכונים בשרי',
-        items: [
-          { to: '/MeatDishes', icon: '🥩', text: 'מנות' },
-          { to: '/MeatSoups', icon: '🥘', text: 'מרקים' }
-        ]
-      }
-    };
-
-    const menu = menuItems[menuType];
-    if (!menu) return null;
-
-    return (
-      <div
-        className="relative inline-block"
-        onMouseEnter={() => handleMouseEnter(menuType)}
-        onMouseLeave={handleMouseLeave}
-      >
-        <button
-          data-menu-trigger
-          className={`px-3 py-2 text-sm font-medium rounded-md ${activeMenu === menuType ? 'bg-gray-700' : 'hover:bg-gray-700'
-            }`}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleDropdown(menuType);
-          }}
-        >
-          {menu.title}
-        </button>
-
-        {activeMenu === menuType && (
-          <div
-            id="dropdownMenu"
-            className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-50"
-            style={{ minWidth: '200px' }}
-          >
-            {menu.items.map((item, index) => (
-              <Link
-                key={index}
-                to={item.to}
-                className="block px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
-                onClick={() => setActiveMenu(null)}
-              >
-                <span className="flex items-center gap-2">
-                  {item.icon} {item.text}
-                </span>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
+  
+  const navItems = [
+    { name: "דף הבית", url: "/home", icon: Home },
+    { name: "כל המתכונים", url: "/AllRecipes", icon: Briefcase },
+    // תמיד מציגים את קישור "יצירת מתכון"
+    { name: "יצירת מתכון", url: "/CreateRecipe", icon: GiCookingPot },
+  ];
 
   const LogOut = () => {
     logout();
-    toast.success('התנתקת בהצלחה !');
+    toast.success("התנתקת בהצלחה!");
     setShowLogoutConfirmation(false);
-    navigate('/login')
+    navigate("/login");
   };
 
-  const cancelLogout = () => {
-    setShowLogoutConfirmation(false);
+  const handleMouseEnter = () => {
+    if (dropdownTimeout) clearTimeout(dropdownTimeout); 
+    setIsDropdownOpen(true);
   };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setIsDropdownOpen(false);
+    }, 300); 
+    setDropdownTimeout(timeout);
+  };
+
+  const handleLinkClick = (url) => {
+    if (url === "/CreateRecipe" && !isLoggedIn) {
+      toast.error("כדי ליצור מתכון יש להיכנס לחשבון!");
+      navigate("/login");  // אם המשתמש לא מחובר, מעביר אותו לדף התחברות
+    } else if (url === "/CreateRecipe" && isLoggedIn) {
+      navigate(url); // אם המשתמש מחובר, פשוט מעביר אותו לדף יצירת המתכון
+    }
+    setIsDropdownOpen(false); 
+  };
+
+  const userDropdown = (
+    <div
+      className="relative inline-block"
+      ref={dropdownRef}
+      onMouseEnter={handleMouseEnter} 
+      onMouseLeave={handleMouseLeave} 
+    >
+      {user ? (
+        <button className="flex items-center gap-2 px-4 py-2 text-black hover:bg-gray-100 rounded-md">
+          <User className="size-5 " />
+          <b className="text-cyan-800"> שלום {user.firstName}</b>
+        </button>
+      ) : (
+        <Link
+          to="/login"
+          className="flex items-center gap-2 px-4 py-2 text-black hover:bg-gray-100 rounded-md"
+        >
+          <User className="size-5" /> התחברות
+        </Link>
+      )}
+
+      {isDropdownOpen && user && (
+        <div
+          className="absolute mt-2 w-56 text-center bg-white border border-gray-200 rounded-md shadow-lg"
+          onMouseEnter={handleMouseEnter} 
+          onMouseLeave={handleMouseLeave} 
+        >
+          <Link
+            to="/PersonalArea"
+            className="block px-4 py-2 text-black hover:bg-gray-100 font-bold"
+            onClick={() => handleLinkClick("/PersonalArea")} 
+          >
+            <FileText className="inline size-5 mr-2 " /> איזור אישי
+          </Link>
+          <Link
+            to="/productsIliked"
+            className="block px-4 py-2 text-black hover:bg-gray-100 font-bold"
+            onClick={() => handleLinkClick("/productsIliked")} 
+          >
+            <Heart className="inline size-5 mr-2 " /> מתכונים שאהבתי
+          </Link>
+
+          <button
+            onClick={() => setShowLogoutConfirmation(true)}
+            className="block w-full font-bold px-4 py-2 text-red-600 hover:bg-gray-100"
+          >
+            <RiLogoutBoxRFill className="inline size-5 mr-2" /> התנתקות
+          </button>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <>
-      <nav className="bg-gray-800 text-white relative z-40" dir="rtl">
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <div className="relative flex h-16 items-center justify-between">
-            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+      <NavBar items={navItems} userDropdown={userDropdown} handleLinkClick={handleLinkClick} />
+      <Search />
+      {showLogoutConfirmation && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className=" bg-white p-6 rounded-md shadow-lg w-80 rtl">
+            <h3 className="text-lg font-bold text-center">
+              האם אתה בטוח שברצונך להתנתק?
+            </h3>
+            <div className="flex justify-between mt-4">
               <button
-                onClick={toggleMobileMenu}
-                className="p-2 rounded-md text-gray-400 hover:bg-gray-700 hover:text-white"
+                onClick={LogOut}
+                className="bg-red-600 text-white px-4 py-2 rounded-md"
               >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-16 6h16"}
-                  />
-                </svg>
+                כן
+              </button>
+              <button
+                onClick={() => setShowLogoutConfirmation(false)}
+                className="bg-gray-300 text-black px-4 py-2 rounded-md"
+              >
+                לא
               </button>
             </div>
-
-            <div className="hidden sm:flex flex-1 items-center justify-between">
-
-              <div className="flex ml-auto space-x-4">
-                <Link to="/Home" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
-                  🏠 בית
-                </Link>
-                <Link to="/PersonalArea" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
-                  🧍 איזור אישי
-                </Link>
-
-                {renderDropdownMenu('dairy')}
-                {renderDropdownMenu('parve')}
-                {renderDropdownMenu('meat')}
-
-                <Link to="/AllRecipes" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
-                  📝 כל המתכונים
-                </Link>
-                <Link to="/CreateRecipe" className="px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
-                  📝 יצירת מתכון
-                </Link>
-                {!isAuthenticated? (
-                  <Link to="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
-                    <IoPersonCircleSharp className="size-7 mt-1 mr-3" />
-                    <p className='font-bold text-yellow-300'>התחבר</p>
-                  </Link>
-                ) : (
-                  <button onClick={confirmLogout} className="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-700 rounded-md">
-                    <RiLogoutBoxRFill className="size-7 mt-1" />
-                    התנתק
-                  </button>
-                )}
-
-                {showLogoutConfirmation && (
-                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-lg w-80">
-                      <h3 className="text-l text-black font-bold text-center">האם אתה בטוח שברצונך להתנתק?</h3>
-                      <div className="flex justify-between mt-4">
-                        <button onClick={LogOut} className="bg-red-600 text-white px-4 py-2 rounded-md">כן</button>
-                        <button onClick={cancelLogout} className="bg-gray-300 text-black px-4 py-2 rounded-md">לא</button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-              </div>
-
-            </div>
           </div>
-
-          {isMobileMenuOpen && (
-            <div className="sm:hidden px-2 pt-2 pb-3 space-y-1">
-              <Link to="/Home" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
-                🏠 בית
-              </Link>
-              <Link to="/PersonalArea" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
-                🧍 איזור אישי
-              </Link>
-
-              <div className="space-y-2">
-                {['dairy', 'fur', 'meat'].map((menuType) => (
-                  <div key={menuType} className="relative">
-                    <button
-                      data-menu-trigger
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleDropdown(menuType);
-                      }}
-                      className={`w-full text-right px-3 py-2 text-base font-medium rounded-md ${activeMenu === menuType ? 'bg-gray-700' : 'hover:bg-gray-700'
-                        }`}
-                    >
-                      {menuType === 'dairy' && '🍕 מתכונים חלבי'}
-                      {menuType === 'parve' && '🍲 מתכונים פרווה'}
-                      {menuType === 'meat' && '🍖 מתכונים בשרי'}
-                      {activeMenu === menuType ? " ▲" : " ▼"}
-                    </button>
-                    {activeMenu === menuType && (
-                      <div className="mr-4 space-y-1 bg-gray-700 rounded-md mt-1">
-                        {menuType === 'dairy' && (
-                          <>
-                            <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🥛 פסטה ברוטב שמנת
-                            </Link>
-                            <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🧀 פיצה
-                            </Link>
-                            <Link to="/DairyDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🥪 לזניה
-                            </Link>
-                          </>
-                        )}
-                        {menuType === 'parve' && (
-                          <>
-                            <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🥗 סלט ירקות
-                            </Link>
-                            <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🥬 מרק ירקות
-                            </Link>
-                            <Link to="/ParveDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🍚 אורז מוקפץ
-                            </Link>
-                          </>
-                        )}
-                        {menuType === 'meat' && (
-                          <>
-                            <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🥩 שניצל
-                            </Link>
-                            <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🍗 עוף בתנור
-                            </Link>
-                            <Link to="/MeatDishes" className="block px-4 py-2 hover:bg-gray-600 rounded-md">
-                              🥘 קציצות בשר
-                            </Link>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <Link to="/AllRecipes" className="block px-3 py-2 text-base font-medium hover:bg-gray-700 rounded-md">
-                📝 כל המתכונים
-              </Link>
-            </div>
-          )}
-
         </div>
-      </nav>
-      <h3 className="text-black font-bold mt-2 mr-2">בס"ד</h3>
+      )}
     </>
   );
-};
-
-export default NavBar;
+}

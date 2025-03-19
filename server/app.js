@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-import recipeRoute from './routes/recipeRouter.js';
-import UserRouter from './routes/UserRouter.js'
-import SearchRouter from './routes/SearchRouter.js'
+import recipeRoute from './src/routes/recipeRouter.js';
+import UserRouter from './src/routes/UserRouter.js'
+import SearchRouter from './src/routes/SearchRouter.js'
 dotenv.config();
 
 const app = express();
@@ -29,10 +29,10 @@ app.use("/api/search", SearchRouter);
 (async () => {
     try {
         await mongoose.connect(process.env.MONGO_URL);
-        console.log('Connected to MongoDB');
+        console.log('Connected to MongoDB 🫙');
         const port = process.env.PORT;
         app.listen(port, () => {
-            console.log(`Server running on port ${process.env.PORT}`);
+            console.log(`Server running on port ${process.env.PORT} 🚀`);
         });
     } catch (err) {
         console.error("Error connecting to MongoDB", err);

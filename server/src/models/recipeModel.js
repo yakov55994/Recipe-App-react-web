@@ -31,13 +31,14 @@ const recipeSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', // Reference to the User model
-        required: true
+        // required: true
     },
     description: {
         type: String,
         required: true,
         maxlength: 1000
-    }
+    },
+    favorites:{type: Boolean}
 });
 
 const Recipe = mongoose.model('Recipe', recipeSchema);

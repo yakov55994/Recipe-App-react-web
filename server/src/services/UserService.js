@@ -3,11 +3,11 @@ import RecipeService from './recipeService.js';  // Ensure this import is correc
 import bcrypt from 'bcrypt';
 
 const userService = {
-  registerUser: async (username, email, password) => {
+  registerUser: async (username, firstName, lastName, email, password, role = "user", confirmSendMailing) => {
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) throw new Error('Username or Email already exists');
 
-    const newUser = new User({ username, email, password });
+    const newUser = new User({ username, firstName, lastName, email, password, role, confirmSendMailing });
     await newUser.save();
     return newUser;
   },
@@ -15,6 +15,19 @@ const userService = {
   getUserByEmail: async (email) => {
     return await User.findOne({ email });
   },
+
+  updateUserProfile: async (userId, updateData) => {
+    try {
+      const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      throw new Error('Error updating user profile');
+    }
+  },  
 
   updateUserPassword: async (userId, newPassword) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -45,7 +58,7 @@ const userService = {
     // Check if the recipe is already in favorites
     const alreadyExists = user.favorites.includes(recipeId);
     if (alreadyExists) {
-      return { status: 400, data: { message: 'Recipe already in favorites' } };
+      return { status: 400, data: { message: 'המתכון נמצא כבר ברשימת המועדפים' } };
     }
 
     // Add recipe to favorites array

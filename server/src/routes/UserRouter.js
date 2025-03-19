@@ -10,7 +10,12 @@ router.post('/register', userController.register);
 // בקשת התחברות
 router.post('/login', userController.login);
 
-router.put("/update-password", authenticate, userController.updatePassword);
+router.post('/check-admin', userController.checkAdmin);
+
+
+router.put("/:id/updateProfile", authenticate, userController.updateProfile);
+
+router.put("/:id/update-password", authenticate, userController.updatePassword);
 
 router.get('/:id', userController.getUserById);
 
@@ -18,7 +23,7 @@ router.post('/likeRecipe', userController.likeRecipe);
 
 router.get('/:userId/favorites', userController.getFavorites);
 
-router.delete("/favorites/:recipeId", userController.deleteFavoriteRecipe);
+router.delete("/:userId/favorites/:recipeId", userController.deleteFavoriteRecipe);
 
 
 export default router;

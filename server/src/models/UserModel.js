@@ -8,6 +8,31 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  firstName: {
+    type: String,
+    required: true,
+    maxlength: 20,
+    minlength: 2,
+    trim: true,
+    unique: true,
+    validate: {
+      validator: (value) => /^[A-Za-z\u0590-\u05FF\s]+$/.test(value),
+      message: 'Full name must only contain Hebrew or English alphabetic characters and spaces.'
+    }
+  },
+  lastName: {
+    type: String,
+    required: true,
+    maxlength: 20,
+    minlength: 2,
+    trim: true,
+    unique: true,
+    validate: {
+      validator: (value) => /^[A-Za-z\u0590-\u05FF\s]+$/.test(value),
+      message: 'Full name must only contain Hebrew or English alphabetic characters and spaces.'
+    }
+  },
+  
   email: {
     type: String,
     required: true,
@@ -21,7 +46,13 @@ const userSchema = new mongoose.Schema({
   favorites: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Recipe' 
-  }]
+  }],
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+  confirmSendMailing: { type:Boolean, required: true}
 });
 
 // Hash password before saving
