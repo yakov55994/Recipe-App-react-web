@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-// import { GiCheeseWedge, GiMeat, GiWheat } from "react-icons/gi";
+import { FaCheese, FaDrumstickBite, FaLeaf } from "react-icons/fa";
 import { cn } from "../../lib/utils.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { toast } from "sonner";
+
 
 export default function NavBar({ items, className, userDropdown }) {
   const [activeTab, setActiveTab] = useState(items[0]?.name || "דף הבית");
@@ -36,12 +37,11 @@ export default function NavBar({ items, className, userDropdown }) {
           <Link
             key={item.name}
             to={item.url}
-            onClick={ async () => {
+            onClick={async () => {
               if (item.url === "/CreateRecipe" && !user) {
                 toast.error("בשביל ליצור מתכון צריך להיות מחובר ");
                 await Promise.resolve();
                 navigate("/login");
-                // return;
               }
               setActiveTab(item.name);
             }}
@@ -68,25 +68,22 @@ export default function NavBar({ items, className, userDropdown }) {
 
         <div className="flex items-center gap-3">
           <button
-            className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-colors text-foreground/80 hover:text-primary"
+            className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-all text-foreground/80 hover:text-primary bg-muted hover:bg-primary/20 cursor-pointer"
             onClick={() => navigate("/allDairy")}
           >
-            {/* <GiCheeseWedge /> */}
-             חלבי
+            <FaCheese size={20} /> חלבי
           </button>
           <button
-            className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-colors text-foreground/80 hover:text-primary"
+            className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-all text-foreground/80 hover:text-primary bg-muted hover:bg-primary/20 cursor-pointer"
             onClick={() => navigate("/allFur")}
           >
-            {/* <GiWheat /> */}
-             פרווה
+            <FaLeaf size={20} /> פרווה
           </button>
           <button
-            className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-colors text-foreground/80 hover:text-primary"
+            className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-all text-foreground/80 hover:text-primary bg-muted hover:bg-primary/20 cursor-pointer"
             onClick={() => navigate("/allMeat")}
           >
-            {/* <GiMeat />  */}
-            בשרי
+            <FaDrumstickBite size={20} /> בשרי
           </button>
         </div>
 

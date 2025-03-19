@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext.jsx";
-// import { RiLogoutBoxRFill } from "react-icons/ri";
+import { RiLogoutBoxRFill } from "react-icons/ri";
 import { Home, User, Briefcase, FileText, Heart } from "lucide-react";
 // import { GiCookingPot } from "react-icons/gi";
 import Search from "./Search/Search.jsx";
 import NavBar from "../components/ui/navbar.jsx";
-import { AlignHorizontalDistributeStart } from 'lucide-react'
+import { FaUtensils  } from 'react-icons/fa'
 
 export default function NavBarDemo() {
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
@@ -25,7 +25,7 @@ export default function NavBarDemo() {
     { name: "דף הבית", url: "/", icon: Home },
     { name: "כל המתכונים", url: "/AllRecipes", icon: Briefcase },
     // תמיד מציגים את קישור "יצירת מתכון"
-    { name: "יצירת מתכון", url: "/CreateRecipe", icon:AlignHorizontalDistributeStart },
+    { name: "יצירת מתכון", url: "/CreateRecipe", icon: FaUtensils   },
   ];
 
   const LogOut = () => {
@@ -103,7 +103,7 @@ export default function NavBarDemo() {
             onClick={() => setShowLogoutConfirmation(true)}
             className="block w-full font-bold px-4 py-2 text-red-600 hover:bg-gray-100"
           >
-            {/* <RiLogoutBoxRFill className="inline size-5 mr-2" /> התנתקות */}
+            <RiLogoutBoxRFill className="inline size-5 mr-2" /> התנתקות
           </button>
         </div>
       )}
