@@ -84,6 +84,15 @@ const EditRecipe = () => {
               className="border-2 border-black"
             />
           </div>
+          <div>
+            <h1>תיאור :</h1>
+            <textarea
+              name="description"
+              value={recipe.description}  
+              onChange={(e) => setRecipe({ ...recipe, description: e.target.value })}
+              className="border-2 border-black"
+            />
+          </div>
             <div>
               <h1>זמן הכנה :</h1>
               <input

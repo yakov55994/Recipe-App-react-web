@@ -54,7 +54,7 @@ const LoginPage = () => {
 
         toast.success('התחברת בהצלחה !');
         console.log("Login successful:", user);
-        navigate("/home");
+        navigate("/");
       }, 100);
 
     } catch (err) {

@@ -26,7 +26,6 @@ import FurSoups from './pages/Fur/FurSoups.jsx';
 import MeatSoups from './pages/Meat/MeatSoups.jsx';
 import EditRecipe from "./pages/Recipe/EditRecipe.jsx";
 
-
 export default function App() {
   return (
     <>
