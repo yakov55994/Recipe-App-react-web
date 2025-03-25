@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import RecipeCard from '../../components/RecipeCard.jsx'; // Import of RecipeCard component
+import RecipeCard from "../../components/RecipeCard.jsx";
 
 const SearchResult = () => {
   const location = useLocation();
@@ -17,15 +17,10 @@ const SearchResult = () => {
 
   return (
     <div>
-      <h1 className="text-center text-4xl mb-6 mt-20 font-bold text-amber-700">
+      <h1 className='text-center text-5xl mb-6 mt-20 font-bold text-amber-700'>
         הנה מה שמצאנו
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-7 mr-7">
-        {/* שלח את הנתונים כל רכיב RecipeCard */}
-        {data.map((recipe, index) => (
-          <RecipeCard key={index} recipe={recipe} />
-        ))}
-      </div>
+      <RecipeCard initialRecipes={data} />
     </div>
   );
 };
