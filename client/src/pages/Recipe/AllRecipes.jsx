@@ -14,7 +14,7 @@ const AllRecipes = () => {
 
   return (
     <div>
-      <h1 className="font-bold text-center text-3xl my-5 mt-24 mb-32">המתכונים שלי</h1>
+      <h1 className="font-bold text-center text-3xl my-5 mt-7 mb-10">כל המתכונים:</h1>
       <RecipeCard />
     </div>
   );

@@ -51,12 +51,15 @@ export default function NavBarDemo() {
   const handleLinkClick = (url) => {
     if (url === "/CreateRecipe" && !isLoggedIn) {
       toast.error("כדי ליצור מתכון יש להיכנס לחשבון!");
-      navigate("/login");  // אם המשתמש לא מחובר, מעביר אותו לדף התחברות
-    } else if (url === "/CreateRecipe" && isLoggedIn) {
-      navigate(url); // אם המשתמש מחובר, פשוט מעביר אותו לדף יצירת המתכון
+      navigate("/login");
+    } else {
+      navigate(url);
     }
-    setIsDropdownOpen(false); 
+  
+    // תמיד סוגר את התפריט לאחר לחיצה
+    setIsDropdownOpen(false);
   };
+  
 
   const userDropdown = (
     <div
@@ -81,7 +84,7 @@ export default function NavBarDemo() {
 
       {isDropdownOpen && user && (
         <div
-          className="absolute mt-2 w-56 text-center bg-white border border-gray-200 rounded-md shadow-lg"
+          className="absolute mt-2 w-56  bg-white border border-gray-200 rounded-md shadow-lg"
           onMouseEnter={handleMouseEnter} 
           onMouseLeave={handleMouseLeave} 
         >
@@ -122,10 +125,10 @@ export default function NavBarDemo() {
             <h3 className="text-lg font-bold text-center">
               האם אתה בטוח שברצונך להתנתק?
             </h3>
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-center mt-4">
               <button
                 onClick={LogOut}
-                className="bg-red-600 text-white px-4 py-2 rounded-md"
+                className="bg-red-600 text-white px-4 py-2 rounded-md "
               >
                 כן
               </button>

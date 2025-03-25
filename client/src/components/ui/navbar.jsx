@@ -70,7 +70,7 @@ export default function NavBar({ items, className, userDropdown }) {
               {activeTab === item.name && (
                 <motion.div
                   layoutId="lamp"
-                  className="absolute inset-0 w-full bg-primary/5 rounded-full -z-10"
+                  className="absolute inset-0 w-full bg-primary/5 rounded-full -z-10 "
                   initial={false}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
@@ -115,7 +115,7 @@ export default function NavBar({ items, className, userDropdown }) {
           <div className="flex justify-between items-center p-3">
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-foreground/80 hover:text-primary"
+              className="text-foreground/80 hover:text-primary "
             >
               {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
@@ -130,9 +130,9 @@ export default function NavBar({ items, className, userDropdown }) {
                   to={item.url}
                   onClick={() => handleItemClick(item)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-xl",
+                    " gap-2 px-4 py-2 rounded-xl font-bold",
                     activeTab === item.name 
-                      ? "bg-primary/10 text-primary" 
+                      ? "bg-primary/10 text-primary " 
                       : "text-foreground/80"
                   )}
                 >
@@ -142,24 +142,35 @@ export default function NavBar({ items, className, userDropdown }) {
               ))}
 
               <div className="flex flex-col gap-3 mt-3">
-                <button
-                  onClick={() => navigate("/allDairy")}
-                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
-                >
-                  <FaCheese size={20} /> חלבי
-                </button>
-                <button
-                  onClick={() => navigate("/allFur")}
-                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
-                >
-                  <FaLeaf size={20} /> פרווה
-                </button>
-                <button
-                  onClick={() => navigate("/allMeat")}
-                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
-                >
-                  <FaDrumstickBite size={20} /> בשרי
-                </button>
+              <button
+  onClick={() => {
+    navigate("/allDairy");
+    setIsMobileMenuOpen(false); // סוגר את התפריט
+  }}
+  className=" font-bold flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
+>
+  <FaCheese size={20} /> חלבי
+</button>
+
+<button
+  onClick={() => {
+    navigate("/allFur");
+    setIsMobileMenuOpen(false); // סוגר את התפריט
+  }}
+  className=" font-bold flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
+>
+  <FaLeaf size={20} /> פרווה
+</button>
+
+<button
+  onClick={() => {
+    navigate("/allMeat");
+    setIsMobileMenuOpen(false); // סוגר את התפריט
+  }}
+  className=" font-bold flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
+>
+  <FaDrumstickBite size={20} /> בשרי
+</button>
               </div>
             </div>
           )}

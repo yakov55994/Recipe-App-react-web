@@ -26,7 +26,7 @@ const defaultMediaItems = [
     id: 3,
     type: "image",
     title: "פיצה פצצה ",
-    desc: "פיצוץ של פיצה בליווי תוספות מגוונים",
+    desc: "פיצוץ של פיצה בליווי תוספות מגוונות",
     url: img3,
     span: "md:col-span-1 md:row-span-3 sm:col-span-2 sm:row-span-2 ",
   },

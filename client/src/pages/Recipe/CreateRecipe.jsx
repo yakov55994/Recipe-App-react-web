@@ -9,7 +9,6 @@ const CreateRecipe = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
- 
   const [allRecipes, setAllRecipes] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -56,7 +55,6 @@ const CreateRecipe = () => {
     }
   };
 
-  
   // Handle recipe form submission
   const handleSubmitRecipe = async (e) => {
     e.preventDefault();
@@ -107,7 +105,6 @@ const CreateRecipe = () => {
       return;
     }
 
-   
     try {
       const recipeData = {
         title: formData.title,
@@ -193,13 +190,13 @@ const CreateRecipe = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br  flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
-      <div className="mt-40 bg-gray-600 shadow-lg rounded-lg p-6 w-full max-w-4xl text-white">
+      <div className="mt-7 bg-gray-600 shadow-lg rounded-lg p-6 w-full max-w-4xl text-white">
         <h1 className="text-center text-2xl sm:text-3xl font-bold text-white dark:text-white mb-14">
           טופס יצירת מתכון ✨
         </h1>
 
         <form onSubmit={handleSubmitRecipe}>
-          <div className="text-black font-bold grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 text-xl">
+          <div className="font-bold grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 text-xl">
             {/* Title */}
             <div>
               <label
@@ -408,7 +405,7 @@ const CreateRecipe = () => {
           <div className="mt-6 text-center">
             <button
               type="submit"
-              className="w-full sm:w-auto bg-purple-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full sm:w-auto bg-gray-300 text-black font-medium py-2 px-4 rounded-b-full active:bg-gray-950 active:text-white "
             >
               צור מתכון
             </button>
