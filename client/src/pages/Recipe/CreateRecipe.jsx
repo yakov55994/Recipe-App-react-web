@@ -405,8 +405,8 @@ const CreateRecipe = () => {
           <div className="mt-6 text-center">
             <button
               type="submit"
-              className="w-full sm:w-auto bg-gray-300 text-black font-medium py-2 px-4 rounded-b-full active:bg-gray-950 active:text-white "
-            >
+              className="lg:w-70 md:w-70 sm:w-96 w-full bg-gray-300 text-black font-medium py-2 px-4 rounded-b-full active:bg-gray-950 active:text-white">
+
               צור מתכון
             </button>
           </div>

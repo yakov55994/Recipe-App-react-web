@@ -105,7 +105,7 @@ export default function NavBarDemo() {
 
           <button
             onClick={() => setShowLogoutConfirmation(true)}
-            className="block w-full font-bold px-4 py-2 text-red-600 hover:bg-gray-100"
+            className="block  font-bold px-4 py-2 text-red-600 hover:bg-gray-100"
           >
             <RiLogoutBoxRFill className="inline size-5 mr-2" /> התנתקות
           </button>

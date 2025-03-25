@@ -38,7 +38,7 @@ const Search = () => {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSearch();
             }}
-            className="w-2/4 sm:w-2/3 md:w-1/2 lg:w-1/3 text-black font-bold p-3 pr-14 border-2 border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out transform hover:scale-105 placeholder-gray-500"
+            className=" sm:w-2/3 md:w-1/2 lg:w-2/3 text-black font-bold p-3 pr-14 border-2 border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out transform hover:scale-105 placeholder-gray-500"
           />
         </div>
         <button

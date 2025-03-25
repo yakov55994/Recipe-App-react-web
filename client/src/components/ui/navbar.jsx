@@ -11,6 +11,7 @@ export default function NavBar({ items, className, userDropdown }) {
   const [scrollingDown, setScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(""); 
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -30,8 +31,16 @@ export default function NavBar({ items, className, userDropdown }) {
       await Promise.resolve();
       navigate("/login");
     }
+    
     setActiveTab(item.name);
+    setActiveCategory(""); 
     setIsMobileMenuOpen(false);
+  };
+
+  const handleCategoryClick = (category, link) => {
+    setActiveCategory(category);
+    setActiveTab(""); // זה השינוי העיקרי
+    navigate(link);
   };
 
   return (
@@ -44,33 +53,23 @@ export default function NavBar({ items, className, userDropdown }) {
           className
         )}
       >
-        <div className="flex items-center gap-3 bg-background/5 border backdrop-blur-lg py-1 px-2 rounded-full shadow-lg">
+        <div className="flex items-center gap-3 bg-black/10 border border-gray-800 backdrop-blur-lg py-1 px-2 rounded-full shadow-xl shadow-black/20 justify-center">
           {items.map((item) => (
             <Link
               key={item.name}
               to={item.url}
-              onClick={async () => {
-                if (item.url === "/CreateRecipe" && !user) {
-                  toast.error("בשביל ליצור מתכון צריך להיות מחובר ");
-                  await Promise.resolve();
-                  navigate("/login");
-                }
-                setActiveTab(item.name);
-              }}
+              onClick={() => handleItemClick(item)}
               className={cn(
-                "relative cursor-pointer text-sm font-semibold px-4 py-2 rounded-3xl transition-colors",
-                "text-foreground/80 hover:text-primary",
-                activeTab === item.name && "bg-muted text-primary"
+                "relative cursor-pointer text-sm font-semibold px-4 py-2 rounded-3xl transition-colors text-gray-300 hover:text-white flex items-center justify-center gap-2",
+                activeTab === item.name ? "bg-gray-800/50 text-black" : "hover:bg-gray-800/30 text-black"
               )}
             >
-              <div className="flex items-center gap-2">
-                <item.icon size={20} strokeWidth={1.5} />
-                <span className="hidden md:inline">{item.name}</span>
-              </div>
+              <item.icon size={20} strokeWidth={1.5} />
+              <span className="hidden md:inline">{item.name}</span>
               {activeTab === item.name && (
                 <motion.div
                   layoutId="lamp"
-                  className="absolute inset-0 w-full bg-primary/5 rounded-full -z-10 "
+                  className="absolute inset-0 w-full text-white bg-gray-800 rounded-full -z-10"
                   initial={false}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
@@ -79,24 +78,30 @@ export default function NavBar({ items, className, userDropdown }) {
           ))}
 
           <div className="flex items-center gap-3">
-            <button
-              className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-all text-foreground/80 hover:text-primary bg-muted hover:bg-primary/20 cursor-pointer"
-              onClick={() => navigate("/allDairy")}
-            >
-              <FaCheese size={20} /> חלבי
-            </button>
-            <button
-              className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-all text-foreground/80 hover:text-primary bg-muted hover:bg-primary/20 cursor-pointer"
-              onClick={() => navigate("/allFur")}
-            >
-              <FaLeaf size={20} /> פרווה
-            </button>
-            <button
-              className="flex items-center gap-2 px-3 py-2 font-semibold rounded-full transition-all text-foreground/80 hover:text-primary bg-muted hover:bg-primary/20 cursor-pointer"
-              onClick={() => navigate("/allMeat")}
-            >
-              <FaDrumstickBite size={20} /> בשרי
-            </button>
+            {[{ label: "חלבי", icon: FaCheese, link: "/allDairy" },
+              { label: "פרווה", icon: FaLeaf, link: "/allFur" },
+              { label: "בשרי", icon: FaDrumstickBite, link: "/allMeat" }].map((item, index) => (
+              <button
+                key={index}
+                className={cn(
+                  "relative flex items-center justify-center gap-2 px-3 py-2 font-semibold rounded-full transition-all hover:bg-gray-800 text-white",
+                  activeCategory === item.label
+                    ? "bg-gray-800 text-white"
+                    : "text-black hover:bg-gray-800 hover:text-white cursor-pointer"
+                )}
+                onClick={() => handleCategoryClick(item.label, item.link)}
+              >
+                <item.icon size={20} /> {item.label}
+                {activeCategory === item.label && (
+                  <motion.div
+                    layoutId="lamp"
+                    className="absolute inset-0 w-full text-white bg-gray-800 rounded-full -z-10"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </button>
+            ))}
           </div>
 
           {userDropdown}
@@ -104,18 +109,12 @@ export default function NavBar({ items, className, userDropdown }) {
       </div>
 
       {/* Mobile Navigation */}
-      <div 
-        className={cn(
-          "fixed w-full top-0 left-0 z-50 p-4 md:hidden",
-          scrollingDown && "-top-24",
-          className
-        )}
-      >
-        <div className="bg-background/5 border backdrop-blur-lg rounded-2xl shadow-lg">
+      <div className={cn("fixed w-full top-0 left-0 z-50 p-4 md:hidden", scrollingDown && "-top-24", className)}>
+        <div className="bg-black/10 border border-gray-800 backdrop-blur-lg rounded-2xl shadow-xl shadow-black/20">
           <div className="flex justify-between items-center p-3">
             <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-foreground/80 hover:text-primary "
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+              className="text-gray-300 hover:text-white"
             >
               {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
@@ -123,55 +122,59 @@ export default function NavBar({ items, className, userDropdown }) {
           </div>
 
           {isMobileMenuOpen && (
-            <div className="flex flex-col gap-3 p-3 border-t">
+            <div className="grid grid-cols-3 gap-3 p-3 border-t border-gray-800">
               {items.map((item) => (
                 <Link
                   key={item.name}
                   to={item.url}
                   onClick={() => handleItemClick(item)}
                   className={cn(
-                    " gap-2 px-4 py-2 rounded-xl font-bold",
+                    "relative flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold",
                     activeTab === item.name 
-                      ? "bg-primary/10 text-primary " 
-                      : "text-foreground/80"
+                      ? "bg-gray-800 text-white text-center font-medium" 
+                      : "bg-gray-300 text-black text-center font-medium"
                   )}
                 >
                   <item.icon size={20} />
                   <span>{item.name}</span>
+                  {activeTab === item.name && (
+                    <motion.div
+                      layoutId="lamp"
+                      className="absolute inset-0 w-full text-white bg-gray-800 rounded-full -z-10"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
                 </Link>
               ))}
 
-              <div className="flex flex-col gap-3 mt-3">
-              <button
-  onClick={() => {
-    navigate("/allDairy");
-    setIsMobileMenuOpen(false); // סוגר את התפריט
-  }}
-  className=" font-bold flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
->
-  <FaCheese size={20} /> חלבי
-</button>
-
-<button
-  onClick={() => {
-    navigate("/allFur");
-    setIsMobileMenuOpen(false); // סוגר את התפריט
-  }}
-  className=" font-bold flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
->
-  <FaLeaf size={20} /> פרווה
-</button>
-
-<button
-  onClick={() => {
-    navigate("/allMeat");
-    setIsMobileMenuOpen(false); // סוגר את התפריט
-  }}
-  className=" font-bold flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-muted"
->
-  <FaDrumstickBite size={20} /> בשרי
-</button>
-              </div>
+              {[{ label: "חלבי", icon: FaCheese, link: "/allDairy" },
+                { label: "פרווה", icon: FaLeaf, link: "/allFur" },
+                { label: "בשרי", icon: FaDrumstickBite, link: "/allMeat" }].map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    handleCategoryClick(item.label, item.link);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={cn(
+                    "relative flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium",
+                    activeCategory === item.label
+                      ? "bg-gray-800 text-white"
+                      : "bg-gray-800/30 text-gray-300 hover:bg-gray-800/50 hover:text-white"
+                  )}
+                >
+                  <item.icon size={20} /> {item.label}
+                  {activeCategory === item.label && (
+                    <motion.div
+                      layoutId="lamp"
+                      className="absolute inset-0 w-full text-white bg-gray-800 rounded-full -z-10"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </button>
+              ))}
             </div>
           )}
         </div>
