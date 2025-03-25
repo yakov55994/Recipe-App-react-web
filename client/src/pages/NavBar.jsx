@@ -8,6 +8,7 @@ import { Home, User, Briefcase, FileText, Heart } from "lucide-react";
 import Search from "./Search/Search.jsx";
 import NavBar from "../components/ui/navbar.jsx";
 import { FaUtensils  } from 'react-icons/fa'
+import AuroraBackgroundDemo from "../components/ui/background/BackgroundView.jsx";
 
 export default function NavBarDemo() {
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
@@ -112,6 +113,7 @@ export default function NavBarDemo() {
 
   return (
     <>
+          {/* <AuroraBackgroundDemo/> */}
       <NavBar items={navItems} userDropdown={userDropdown} handleLinkClick={handleLinkClick} />
       <Search />
       {showLogoutConfirmation && (
