@@ -53,7 +53,7 @@
 //   if (loading) {
 //     return <Loader isLoading={true} />;
 //   }
-  
+
 //   const formatToList = (text) => {
 //     if (Array.isArray(text)) {
 //       return text.map((item) => item.trim());
@@ -244,7 +244,13 @@ import { useParams } from "react-router-dom";
 import { API_SERVER_URL } from "../../api/api.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Loader from "../../components/Loader.jsx";
-import { ClockIcon, UsersIcon, StarIcon, AlertCircleIcon, BookIcon } from "lucide-react";
+import {
+  ClockIcon,
+  UsersIcon,
+  StarIcon,
+  AlertCircleIcon,
+  BookIcon,
+} from "lucide-react";
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -294,7 +300,7 @@ const RecipeDetails = () => {
   if (loading) {
     return <Loader isLoading={true} />;
   }
-  
+
   const formatToList = (text) => {
     if (Array.isArray(text)) {
       return text.map((item) => item.trim());
@@ -330,7 +336,9 @@ const RecipeDetails = () => {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center p-8 bg-red-50 rounded-lg shadow-lg">
           <h1 className="text-3xl font-bold text-red-500">המתכון לא נמצא</h1>
-          <p className="mt-4 text-gray-600">נסה לחפש מתכון אחר או חזור לדף הבית</p>
+          <p className="mt-4 text-gray-600">
+            נסה לחפש מתכון אחר או חזור לדף הבית
+          </p>
         </div>
       </div>
     );
@@ -344,10 +352,15 @@ const RecipeDetails = () => {
     : formatInstructions(recipe.instructions);
 
   // Calculate total time
-  const totalTime = (parseInt(recipe.preparationTime) || 0) + (parseInt(recipe.cookingTime) || 0);
+  const totalTime =
+    (parseInt(recipe.preparationTime) || 0) +
+    (parseInt(recipe.cookingTime) || 0);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl bg-white shadow-lg rounded-lg" dir="rtl">
+    <div
+      className="container mx-auto px-4 py-8 max-w-6xl bg-white shadow-lg rounded-lg"
+      dir="rtl"
+    >
       {/* Top section with image and basic info */}
       <div className="flex flex-col md:flex-row">
         {/* Image */}
@@ -362,13 +375,15 @@ const RecipeDetails = () => {
             <p className="text-gray-600">מאת: {creatorName}</p>
           </div>
         </div>
-        
+
         {/* Recipe quick info */}
         <div className="w-full md:w-3/5 p-4">
           <div className="mb-6">
-            <p className="text-gray-700 leading-relaxed">{recipe.description}</p>
+            <p className="text-gray-700 leading-relaxed">
+              {recipe.description}
+            </p>
           </div>
-          
+
           {/* Info cards in grid */}
           <div className="flex flex-wrap justify-center gap-2 mb-6">
             <div className="flex items-center justify-center p-2 bg-gray-100 rounded-lg w-32 text-center">
@@ -377,97 +392,127 @@ const RecipeDetails = () => {
                 <span className="text-sm text-gray-500">כשר</span>
               </div>
             </div>
-            
+
             {recipe.categories?.mainCategory && (
               <div className="flex items-center justify-center p-2 bg-gray-100 rounded-lg w-32 text-center">
                 <div className="flex flex-col items-center">
                   <BookIcon className="w-6 h-6 text-gray-500 mb-1" />
                   <span className="text-sm text-gray-500">
-                    {recipe.categories.mainCategory === "Dairy" ? "חלבי" : 
-                     recipe.categories.mainCategory === "Meat" ? "בשרי" : 
-                     recipe.categories.mainCategory === "Fur" ? "פרווה" : recipe.categories.mainCategory}
+                    {recipe.categories.mainCategory === "Dairy"
+                      ? "חלבי"
+                      : recipe.categories.mainCategory === "Meat"
+                      ? "בשרי"
+                      : recipe.categories.mainCategory === "Fur"
+                      ? "פרווה"
+                      : recipe.categories.mainCategory}
                   </span>
                 </div>
               </div>
             )}
-            
+
             {recipe.difficulty && (
               <div className="flex items-center justify-center p-2 bg-gray-100 rounded-lg w-32 text-center">
                 <div className="flex flex-col items-center">
                   <StarIcon className="w-6 h-6 text-gray-500 mb-1" />
                   <span className="text-sm text-gray-500">
-                    {recipe.difficulty === "Easy" ? "קל" : 
-                     recipe.difficulty === "Medium" ? "בינוני" : 
-                     recipe.difficulty === "Hard" ? "קשה" : recipe.difficulty}
+                    {recipe.difficulty === "Easy"
+                      ? "קל"
+                      : recipe.difficulty === "Medium"
+                      ? "בינוני"
+                      : recipe.difficulty === "Hard"
+                      ? "קשה"
+                      : recipe.difficulty}
                   </span>
                 </div>
               </div>
             )}
-            
+
             {totalTime > 0 && (
               <div className="flex items-center justify-center p-2 bg-gray-100 rounded-lg w-32 text-center">
                 <div className="flex flex-col items-center">
                   <ClockIcon className="w-6 h-6 text-gray-500 mb-1" />
-                  <span className="text-sm text-gray-500">הכנה: {totalTime} דקות</span>
+                  <span className="text-sm text-gray-500">
+                    הכנה: {totalTime} דקות
+                  </span>
                 </div>
               </div>
             )}
-            
+
             {recipe.servings && (
               <div className="flex items-center justify-center p-2 bg-gray-100 rounded-lg w-32 text-center">
                 <div className="flex flex-col items-center">
                   <UsersIcon className="w-6 h-6 text-gray-500 mb-1" />
-                  <span className="text-sm text-gray-500">מנות: {recipe.servings}</span>
+                  <span className="text-sm text-gray-500">
+                    מנות: {recipe.servings}
+                  </span>
                 </div>
               </div>
             )}
           </div>
-          
+
           {/* Rating stars */}
-            <div className="flex justify-center mb-6">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">ציון המתכון</h3>
-                <div className="flex items-center justify-center">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <StarIcon 
-                      key={star} 
-                      className={`w-6 h-6 ${star <= 4 ? "text-yellow-400" : "text-gray-300"}`} 
-                      fill={star <= 4 ? "#FBBF24" : "none"}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-500 mt-1">4 מתוך 5 (14 דירוגים)</span>
+          <div className="flex justify-center mb-6">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2">ציון המתכון</h3>
+              <div className="flex items-center justify-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <StarIcon
+                    key={star}
+                    className={`w-6 h-6 ${
+                      star <= 4 ? "text-yellow-400" : "text-gray-300"
+                    }`}
+                    fill={star <= 4 ? "#FBBF24" : "none"}
+                  />
+                ))}
               </div>
+              <span className="text-sm text-gray-500 mt-1">
+                4 מתוך 5 (14 דירוגים)
+              </span>
             </div>
+          </div>
         </div>
       </div>
-      
+
       {/* Tabs for ingredients and instructions */}
       <div className="mt-8 border-t pt-6">
-        <h2 className="text-xl font-bold text-center text-gray-800 mb-4">עוד פרטים חשובים</h2>
-        
+        <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
+          עוד פרטים חשובים
+        </h2>
+
         {/* Tab buttons */}
         <div className="flex justify-center border-b mb-6">
-          <button 
-            className={`px-4 py-2 mr-2 ${activeTab === "ingredients" ? "text-blue-500 border-b-2 border-blue-500 font-bold" : "text-gray-500"}`}
+          <button
+            className={`px-4 py-2 mr-2 ${
+              activeTab === "ingredients"
+                ? "text-blue-500 border-b-2 border-blue-500 font-bold"
+                : "text-gray-500"
+            }`}
             onClick={() => setActiveTab("ingredients")}
           >
             רשימת מרכיבים
           </button>
-          <button 
-            className={`px-4 py-2 ${activeTab === "instructions" ? "text-blue-500 border-b-2 border-blue-500 font-bold" : "text-gray-500"}`}
+          <button
+            className={`px-4 py-2 ${
+              activeTab === "instructions"
+                ? "text-blue-500 border-b-2 border-blue-500 font-bold"
+                : "text-gray-500"
+            }`}
             onClick={() => setActiveTab("instructions")}
           >
             אופן ההכנה בפירוט מלא
           </button>
-          <button 
-            className={`px-4 py-2 ml-2 ${activeTab === "tips" ? "text-blue-500 border-b-2 border-blue-500 font-bold" : "text-gray-500"}`}
+          <button
+            className={`px-4 py-2 ml-2 ${
+              activeTab === "tips"
+                ? "text-blue-500 border-b-2 border-blue-500 font-bold"
+                : "text-gray-500"
+            }`}
             onClick={() => setActiveTab("tips")}
           >
             טיפים
           </button>
         </div>
-        
+
         {/* Tab content */}
         <div className="p-4">
           {activeTab === "ingredients" && (
@@ -485,10 +530,12 @@ const RecipeDetails = () => {
               </ul>
             </div>
           )}
-          
+
           {activeTab === "instructions" && (
             <div>
-              <h3 className="text-lg font-bold text-gray-800 mb-4">אופן ההכנה</h3>
+              <h3 className="text-lg font-bold text-gray-800 mb-4">
+                אופן ההכנה
+              </h3>
               <ol className="space-y-4">
                 {instructionsList.map((step, index) => (
                   <li key={index} className="bg-gray-50 p-4 rounded-lg">
@@ -503,7 +550,7 @@ const RecipeDetails = () => {
               </ol>
             </div>
           )}
-          
+
           {activeTab === "tips" && (
             <div>
               <h3 className="text-lg font-bold text-gray-800 mb-4">טיפים</h3>
@@ -511,8 +558,8 @@ const RecipeDetails = () => {
                 <div className="flex items-start">
                   <AlertCircleIcon className="w-6 h-6 text-yellow-500 mr-2 flex-shrink-0 ml-3" />
                   <p className="text-gray-700">
-                  "אל תשכחו לבדוק את התיבול בסוף הכנה. תמיד כדאי לטעום ולהתאים את התיבול למתכון בהתאם להעדפות האישיות שלכם."
-
+                    "אל תשכחו לבדוק את התיבול בסוף הכנה. תמיד כדאי לטעום ולהתאים
+                    את התיבול למתכון בהתאם להעדפות האישיות שלכם."
                   </p>
                 </div>
               </div>
@@ -520,12 +567,18 @@ const RecipeDetails = () => {
           )}
         </div>
       </div>
-      
+
       {/* Comments section */}
       <div className="mt-8 border-t pt-6">
-        <h2 className="text-xl font-bold text-center text-gray-800 mb-4">תגובות</h2>
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">-- בקרוב  --</h2>
-    
+        <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
+          תגובות
+        </h2>
+        <div className="flex justify-center">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4 bg-amber-100 w-50 rounded-lg">
+             בקרוב  🤌
+          </h2>
+        </div>
+
         {/* <div className="flex justify-center gap-2 mb-6">
           <button className="px-4 py-2 bg-blue-500 text-white rounded-full text-sm hover:bg-blue-600">
             להוספת תגובה
@@ -535,12 +588,17 @@ const RecipeDetails = () => {
           </button>
         </div> */}
       </div>
-      
+
       {/* Similar recipes section */}
       <div className="mt-8 border-t pt-6 mb-6">
-        <h2 className="text-xl font-bold text-center text-gray-800 mb-4">מתכונים דומים ומומלצים</h2>
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">-- בקרוב  --</h2>
-      
+        <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
+          מתכונים דומים ומומלצים
+        </h2>
+        <div className="flex justify-center">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4 bg-amber-100 w-50 rounded-lg">
+             בקרוב  🤌
+          </h2>  
+        </div>
         {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((item) => (
             <div key={item} className="text-center">
