@@ -3,7 +3,7 @@ import { API_SERVER_URL } from "../../api/api.js";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-// import { IoSearch } from "react-icons/io5";
+import { IoSearch } from "react-icons/io5";
 
 const Search = () => {
   const [query, setQuery] = useState("");
@@ -45,7 +45,7 @@ const Search = () => {
           onClick={handleSearch}
           className="absolute right-1 top-10 mr-2 transform -translate-y-1/2 text-gray-500 hover:text-blue-500 transition duration-200"
         >
-          {/* <IoSearch size={24} /> */}
+          <IoSearch size={24} className="mr-14 mt-4 lg:mr-20 lg:mt-4 cursor-pointer" />
         </button>
       </div>
     </div>

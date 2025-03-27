@@ -152,13 +152,13 @@ const RecipeCard = ({ mainCategory, initialRecipes }) => {
               <div className="flex gap-3">
                 <button 
                   onClick={() => deleteRecipe(recipe._id)}
-                  className="bg-red-600 text-yellow-300 font-bold p-5 rounded-4xl mt-4 hover:bg-red-800"
+                  className="cursor-pointer bg-red-600 text-yellow-300 font-bold p-5 rounded-4xl mt-4 hover:bg-red-800"
                 >
                   מחק מתכון
                 </button>
                 <button 
                   onClick={() => editRecipe(recipe._id)}
-                  className="bg-green-600 text-black font-bold p-5 rounded-4xl mt-4 hover:bg-green-800"
+                  className="cursor-pointer bg-green-600 text-black font-bold p-5 rounded-4xl mt-4 hover:bg-green-800"
                 >
                   ערוך מתכון
                 </button>

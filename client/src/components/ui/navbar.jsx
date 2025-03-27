@@ -61,7 +61,7 @@ export default function NavBar({ items, className, userDropdown }) {
               onClick={() => handleItemClick(item)}
               className={cn(
                 "relative cursor-pointer text-sm font-semibold px-4 py-2 rounded-3xl transition-colors text-gray-300 hover:text-white flex items-center justify-center gap-2",
-                activeTab === item.name ? "bg-gray-800/50 text-black" : "hover:bg-gray-800/30 text-black"
+                activeTab === item.name ? "bg-gray-800/50 text-white" : "hover:bg-gray-800/30 text-black"
               )}
             >
               <item.icon size={20} strokeWidth={1.5} />

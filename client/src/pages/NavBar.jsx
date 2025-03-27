@@ -71,7 +71,7 @@ export default function NavBarDemo() {
       {user ? (
         <button className="flex items-center gap-2 px-4 py-2 text-black hover:bg-gray-100 rounded-md">
           <User className="size-5 " />
-          <b className="text-cyan-800"> שלום {user.firstName}</b>
+          <b className="text-cyan-900 font-medium"> שלום {user.firstName}</b>
         </button>
       ) : (
         <Link
@@ -84,20 +84,20 @@ export default function NavBarDemo() {
 
       {isDropdownOpen && user && (
         <div
-          className="absolute mt-2 w-56  bg-white border border-gray-200 rounded-md shadow-lg"
+          className="absolute mt-2 w-56  bg-white border border-gray-200 rounded-l-full shadow-lg "
           onMouseEnter={handleMouseEnter} 
           onMouseLeave={handleMouseLeave} 
         >
           <Link
             to="/PersonalArea"
-            className="block px-4 py-2 text-black hover:bg-gray-100 font-bold"
+            className="block px-4 py-2 text-black hover:bg-gray-700 font-bold rounded-l-full w-45 hover:text-white"
             onClick={() => handleLinkClick("/PersonalArea")} 
           >
             <FileText className="inline size-5 mr-2 " /> איזור אישי
           </Link>
           <Link
             to="/productsIliked"
-            className="block px-4 py-2 text-black hover:bg-gray-100 font-bold"
+            className="block px-4 py-2 text-black hover:bg-gray-700 font-bold rounded-l-full w-50 hover:text-white "
             onClick={() => handleLinkClick("/productsIliked")} 
           >
             <Heart className="inline size-5 mr-2 " /> מתכונים שאהבתי
@@ -105,7 +105,7 @@ export default function NavBarDemo() {
 
           <button
             onClick={() => setShowLogoutConfirmation(true)}
-            className="block  font-bold px-4 py-2 text-red-600 hover:bg-gray-100"
+            className="block  font-bold px-4 py-2 text-red-600 hover:bg-gray-700  rounded-l-full w-35 cursor-pointer"
           >
             <RiLogoutBoxRFill className="inline size-5 mr-2" /> התנתקות
           </button>

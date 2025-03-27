@@ -1,0 +1,342 @@
+import { useState, useEffect } from "react";
+import { API_SERVER_URL } from "../../api/api.js";
+import { toast } from "sonner";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
+
+const CreateRecipe = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    title: "",
+    ingredients: [{ title: "", items: [""] }],
+    instructions: [{ title: "", steps: [""] }],
+    preparationTime: "",
+    cookingTime: "",
+    servings: "", // נוסף
+    imageUrl: "", // נוסף
+    difficulty: "", // נוסף
+    categories: { mainCategory: "", subCategory: "" }, // נוסף
+    description: "",
+    favorites: false, // נוסף
+    user: user?._id,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleNestedChange = (type, index, field, value) => {
+    setFormData((prev) => {
+      if (Array.isArray(prev[type])) {
+        // אם זה מערך (כגון ingredients או instructions)
+        const updatedArray = [...prev[type]];
+        updatedArray[index] = { ...updatedArray[index], [field]: value };
+        return { ...prev, [type]: updatedArray };
+      } else {
+        // אם זה אובייקט (כגון categories)
+        return { ...prev, [type]: { ...prev[type], [field]: value } };
+      }
+    });
+  };
+
+  const handleListChange = (type, index, field, value) => {
+    setFormData((prev) => {
+      const updatedArray = [...prev[type]];
+      updatedArray[index][field] = value.split(",").map((item) => item.trim());
+      return { ...prev, [type]: updatedArray };
+    });
+  };
+
+  const addSection = (type) => {
+    setFormData((prev) => {
+      if (!Array.isArray(prev[type])) return prev; // מונע קריסה במקרה של אובייקט
+      const newItem =
+        type === "ingredients"
+          ? { title: "", items: [""] }
+          : { title: "", steps: [""] }; // מתאים ל-instructions
+      return { ...prev, [type]: [...prev[type], newItem] };
+    });
+  };
+
+  const handleSubmitRecipe = async (e) => {
+    console.log(formData);
+    console.log(formData)
+    e.preventDefault();
+    // סינון מרכיבים ריקים
+    const validIngredients = formData.ingredients
+      .map((ingredient) => ({
+        title: ingredient.title,
+        items: ingredient.items.filter((item) => item.trim() !== ""),
+      }))
+      .filter(
+        (ingredient) =>
+          ingredient.items.length > 0 && ingredient.title.trim() !== ""
+      );
+
+    const validInstructions = formData.instructions
+      .map((instruction) => ({
+        title: instruction.title,
+        steps: instruction.steps.filter((step) => step.trim() !== ""),
+      }))
+      .filter(
+        (instruction) =>
+          instruction.steps.length > 0 && instruction.title.trim() !== ""
+      );
+
+    // Existing validation checks...
+
+    try {
+      const response = await axios.post(
+        `${API_SERVER_URL}/recipe/createRecipe`,
+        {
+          ...formData,
+          ingredients: validIngredients.map((ing) => ({
+            title: ing.title,
+            items: ing.items, // Ensure this is an array of strings
+          })),
+          instructions: validInstructions.map((inst) => ({
+            title: inst.title,
+            steps: inst.steps, // Ensure this is an array of strings
+          })),
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          Authorization: `Bearer ${user?.token}`,
+        }
+      );
+
+      toast.success("המתכון נוצר בהצלחה");
+      navigate("/");
+    } catch (error) {
+      console.error("Error response:", error.message);
+      toast.error(error.response?.data?.message || "הייתה שגיאה בביצוע הפעולה");
+    }
+  };
+  return (
+    <div className="min-h-screen flex items-center justify-center py-6 px-4">
+      <div className="bg-gray-600 shadow-lg rounded-lg p-6 w-full max-w-4xl text-white">
+        <h1 className="text-center text-3xl font-bold mb-14">
+          טופס יצירת מתכון ✨
+        </h1>
+        <form onSubmit={handleSubmitRecipe}>
+          <div className="grid gap-4 sm:grid-cols-2 text-xl">
+            <input
+              type="number"
+              name="servings"
+              value={formData.servings}
+              onChange={handleChange}
+              placeholder="מנות"
+              className="w-full p-2 rounded"
+            />
+
+            <input
+              type="text"
+              name="imageUrl"
+              value={formData.imageUrl}
+              onChange={handleChange}
+              placeholder="קישור לתמונה"
+              className="w-full p-2 rounded"
+            />
+
+            <select
+              name="difficulty"
+              value={formData.difficulty}
+              onChange={handleChange}
+              className="w-full p-2 rounded"
+            >
+              <option value="">בחר רמת קושי</option>
+              <option value="Easy">קל</option>
+              <option value="Medium">בינוני</option>
+              <option value="Hard">קשה</option>
+            </select>
+
+            <select
+              name="categories.mainCategory"
+              value={formData.categories.mainCategory}
+              onChange={(e) =>
+                handleNestedChange(
+                  "categories",
+                  null,
+                  "mainCategory",
+                  e.target.value
+                )
+              }
+              className="w-full p-2 rounded"
+            >
+              <option value="">בחר קטגוריה ראשית</option>
+              <option value="Dairy">חלב</option>
+              <option value="Fur">פרווה</option>
+              <option value="Meat">בשר</option>
+            </select>
+
+            <select
+              name="categories.subCategory"
+              value={formData.categories.subCategory}
+              onChange={(e) =>
+                handleNestedChange(
+                  "categories",
+                  null,
+                  "subCategory",
+                  e.target.value
+                )
+              }
+              className="w-full p-2 rounded"
+            >
+              <option value="">בחר תת-קטגוריה</option>
+              <option value="Dishes">מנות עיקריות</option>
+              <option value="Desserts">קינוחים</option>
+              <option value="Soups">מרקים</option>
+            </select>
+
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="favorites"
+                checked={formData.favorites}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    favorites: e.target.checked,
+                  }))
+                }
+              />
+              הוסף למועדפים
+            </label>
+
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="שם מתכון"
+              className="w-full p-2 rounded"
+            />
+            <input
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="תיאור מתכון"
+              className="w-full p-2 rounded"
+            />
+            <input
+              type="number"
+              name="preparationTime"
+              value={formData.preparationTime}
+              onChange={handleChange}
+              placeholder="זמן הכנה (בדקות)"
+              className="w-full p-2 rounded"
+            />
+            <input
+              type="number"
+              name="cookingTime"
+              value={formData.cookingTime}
+              onChange={handleChange}
+              placeholder="זמן בישול (בדקות)"
+              className="w-full p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold mt-4">מרכיבים</h2>
+            {formData.ingredients.map((ingredient, index) => (
+              <div key={index} className="mb-4">
+                <input
+                  type="text"
+                  value={ingredient.title}
+                  onChange={(e) =>
+                    handleNestedChange(
+                      "ingredients",
+                      index,
+                      "title",
+                      e.target.value
+                    )
+                  }
+                  placeholder="כותרת"
+                  className="w-full p-2 rounded mb-2"
+                />
+                <input
+                  type="text"
+                  value={ingredient?.items?.join(", ")}
+                  onChange={(e) =>
+                    handleListChange(
+                      "ingredients",
+                      index,
+                      "items",
+                      e.target.value
+                    )
+                  }
+                  placeholder="רשימת מרכיבים (מופרדים בפסיק)"
+                  className="w-full p-2 rounded"
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => addSection("ingredients")}
+              className="bg-gray-300 text-black py-1 px-4 rounded"
+            >
+              ➕ הוסף מרכיב
+            </button>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold mt-4">הוראות הכנה</h2>
+            {formData.instructions.map((instruction, index) => (
+              <div key={index} className="mb-4">
+                <input
+                  type="text"
+                  value={instruction.title}
+                  onChange={(e) =>
+                    handleNestedChange(
+                      "instructions",
+                      index,
+                      "title",
+                      e.target.value
+                    )
+                  }
+                  placeholder="כותרת"
+                  className="w-full p-2 rounded mb-2"
+                />
+                <input
+                  type="text"
+                  value={instruction?.steps?.join(", ")}
+                  onChange={(e) =>
+                    handleListChange(
+                      "instructions",
+                      index,
+                      "steps",
+                      e.target.value
+                    )
+                  }
+                  placeholder="רשימת שלבים (מופרדים בפסיק)"
+                  className="w-full p-2 rounded"
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => addSection("instructions")}
+              className="bg-gray-300 text-black py-1 px-4 rounded"
+            >
+              ➕ הוסף הוראה
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-gray-300 text-black py-2 px-4 rounded mt-6"
+          >
+            ✔ צור מתכון
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default CreateRecipe;

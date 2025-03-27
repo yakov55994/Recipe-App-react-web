@@ -424,21 +424,21 @@ const RecipeDetails = () => {
           </div>
           
           {/* Rating stars */}
-          <div className="flex justify-center mb-6">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold mb-2">ציון המתכון</h3>
-              <div className="flex items-center justify-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <StarIcon 
-                    key={star} 
-                    className={`w-6 h-6 ${star <= 4 ? "text-yellow-400" : "text-gray-300"}`} 
-                    fill={star <= 4 ? "#FBBF24" : "none"}
-                  />
-                ))}
+            <div className="flex justify-center mb-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">ציון המתכון</h3>
+                <div className="flex items-center justify-center">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <StarIcon 
+                      key={star} 
+                      className={`w-6 h-6 ${star <= 4 ? "text-yellow-400" : "text-gray-300"}`} 
+                      fill={star <= 4 ? "#FBBF24" : "none"}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500 mt-1">4 מתוך 5 (14 דירוגים)</span>
               </div>
-              <span className="text-sm text-gray-500 mt-1">4 מתוך 5 (14 דירוגים)</span>
             </div>
-          </div>
         </div>
       </div>
       
@@ -476,7 +476,7 @@ const RecipeDetails = () => {
               <ul className="space-y-2">
                 {ingredientsList.map((ingredient, index) => (
                   <li key={index} className="flex items-start">
-                    <span className="inline-block w-6 h-6 bg-blue-100 rounded-full flex-shrink-0 mr-2 flex items-center justify-center text-blue-500">
+                    <span className="ml-3 w-6 h-6 bg-blue-100 rounded-full flex-shrink-0 mr-2 flex items-center justify-center text-blue-500">
                       {index + 1}
                     </span>
                     <span className="text-gray-700">{ingredient}</span>
@@ -493,7 +493,7 @@ const RecipeDetails = () => {
                 {instructionsList.map((step, index) => (
                   <li key={index} className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex">
-                      <span className="inline-block w-8 h-8 bg-blue-500 rounded-full flex-shrink-0 mr-3 flex items-center justify-center text-white font-bold">
+                      <span className="ml-3 w-8 h-8 bg-blue-500 rounded-full flex-shrink-0 mr-3 flex items-center justify-center text-white font-bold">
                         {index + 1}
                       </span>
                       <span className="text-gray-700">{step}</span>
@@ -509,9 +509,10 @@ const RecipeDetails = () => {
               <h3 className="text-lg font-bold text-gray-800 mb-4">טיפים</h3>
               <div className="bg-yellow-50 p-4 rounded-lg border-r-4 border-yellow-400">
                 <div className="flex items-start">
-                  <AlertCircleIcon className="w-6 h-6 text-yellow-500 mr-2 flex-shrink-0" />
+                  <AlertCircleIcon className="w-6 h-6 text-yellow-500 mr-2 flex-shrink-0 ml-3" />
                   <p className="text-gray-700">
-                    ניתן לשמור את המתכון במקרר עד 3 ימים או להקפיא למשך חודש.
+                  "אל תשכחו לבדוק את התיבול בסוף הכנה. תמיד כדאי לטעום ולהתאים את התיבול למתכון בהתאם להעדפות האישיות שלכם."
+
                   </p>
                 </div>
               </div>
@@ -523,27 +524,31 @@ const RecipeDetails = () => {
       {/* Comments section */}
       <div className="mt-8 border-t pt-6">
         <h2 className="text-xl font-bold text-center text-gray-800 mb-4">תגובות</h2>
-        <div className="flex justify-center gap-2 mb-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">-- בקרוב  --</h2>
+    
+        {/* <div className="flex justify-center gap-2 mb-6">
           <button className="px-4 py-2 bg-blue-500 text-white rounded-full text-sm hover:bg-blue-600">
             להוספת תגובה
           </button>
           <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300">
             לצפייה בכל התגובות
           </button>
-        </div>
+        </div> */}
       </div>
       
       {/* Similar recipes section */}
       <div className="mt-8 border-t pt-6 mb-6">
         <h2 className="text-xl font-bold text-center text-gray-800 mb-4">מתכונים דומים ומומלצים</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">-- בקרוב  --</h2>
+      
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((item) => (
             <div key={item} className="text-center">
               <div className="w-full h-32 bg-gray-200 rounded-lg mb-2"></div>
               <p className="text-gray-700 font-medium">מתכון לדוגמה {item}</p>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
