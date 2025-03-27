@@ -24,7 +24,7 @@ const EditRecipe = () => {
     const fetchRecipe = async () => {
       try {
         const response = await axios.get(`${API_SERVER_URL}/recipe/${recipeId}`);
-        setRecipe(response.data); // שמירת הנתונים ב-state
+        setRecipe(response.data);
       } catch (error) {
         console.error("שגיאה בטעינת המתכון:", error.message);
         toast.error("שגיאה בטעינת המתכון.");
@@ -33,7 +33,6 @@ const EditRecipe = () => {
 
     fetchRecipe();
   }, [recipeId]);
-
 
   const handleInputChange = (event) => {
     setRecipe({ ...recipe, [event.target.name]: event.target.value });
@@ -50,116 +49,134 @@ const EditRecipe = () => {
       toast.error("Error", error.message);
     }
   };
+
   return (
-    <>
-      <div>
-        <h1 className="font-bold text-3xl mt-20 text-center">עדכון מתכון</h1>
-        <div className="flex justify-center ">
-          <div className=" mt-14 bg-gray-300 p-10 grid grid-cols-4 gap-4 max-w-[1000px] rounded-2xl border-2 border-black">
-            <div>
-              <h1>שם מתכון :</h1>
-              <input
-                name="title"
-                value={recipe.title}
-                onChange={handleInputChange}
-                type="text"
-                className="border-2 border-black p-2 "
-              />
-            </div>
-            <div>
-            <h1>מרכיבים :</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="font-bold text-2xl md:text-3xl text-center mb-8">עדכון מתכון</h1>
+      
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="bg-gray-300 p-6 md:p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 rounded-2xl border-2 border-black">
+          {/* Title */}
+          <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4">
+            <label className="block mb-2">שם מתכון :</label>
+            <input
+              name="title"
+              value={recipe.title}
+              onChange={handleInputChange}
+              type="text"
+              className="w-full border-2 border-black p-2 rounded"
+            />
+          </div>
+
+          {/* Ingredients */}
+          <div>
+            <label className="block mb-2">מרכיבים :</label>
             <textarea
               name="ingredients"
-              value={recipe.ingredients.join("\n")} // מציג כטקסט מופרד בשורות
+              value={recipe.ingredients.join("\n")}
               onChange={(e) => setRecipe({ ...recipe, ingredients: e.target.value.split("\n") })}
-              className="border-2 border-black"
+              className="w-full border-2 border-black p-2 rounded h-32"
             />
           </div>
+
+          {/* Instructions */}
           <div>
-            <h1>הוראות הכנה :</h1>
+            <label className="block mb-2">הוראות הכנה :</label>
             <textarea
               name="instructions"
-              value={recipe.instructions.join("\n")} // מציג כטקסט מופרד בשורות
+              value={recipe.instructions.join("\n")}
               onChange={(e) => setRecipe({ ...recipe, instructions: e.target.value.split("\n") })}
-              className="border-2 border-black"
+              className="w-full border-2 border-black p-2 rounded h-32"
             />
           </div>
+
+          {/* Description */}
           <div>
-            <h1>תיאור :</h1>
+            <label className="block mb-2">תיאור :</label>
             <textarea
               name="description"
               value={recipe.description}  
               onChange={(e) => setRecipe({ ...recipe, description: e.target.value })}
-              className="border-2 border-black"
+              className="w-full border-2 border-black p-2 rounded h-32"
             />
           </div>
-            <div>
-              <h1>זמן הכנה :</h1>
-              <input
-                name="preparationTime"
-                value={recipe.preparationTime}
-                onChange={handleInputChange}
-                type="number"
-                className="border-2 border-black"
-              />
-            </div>
-            <div>
-              <h1>זמן בישול :</h1>
-              <input
-                name="cookingTime"
-                value={recipe.cookingTime}
-                onChange={handleInputChange}
-                type="number"
-                className="border-2 border-black"
-              />
-            </div>
-            <div>
-              <h1>כמות מנות :</h1>
-              <input
-                name="servings"
-                value={recipe.servings}
-                onChange={handleInputChange}
-                type="number"
-                className="border-2 border-black"
-              />
-            </div>
-            <div>
-              <h1>תמונה :</h1>
-              <input
-                name="imageUrl"
-                value={recipe.imageUrl}
-                onChange={handleInputChange}
-                type="text"
-                className="border-2 border-black"
-              />
-            </div>
-            <div>
-              <h1>רמת קושי :</h1>
-              <select
-                name="difficulty"
-                onChange={handleInputChange}
-                value={recipe.difficulty}
-                type="text"
-                className="border-2 border-black"
-              >
-                <option value="">בחר רמת קושי</option>
-                <option value="Easy">קל</option>
-                <option value="Medium">בינוני</option>
-                <option value="Hard">קשה</option>
-              </select>
-            </div>
+
+          {/* Preparation Time */}
+          <div>
+            <label className="block mb-2">זמן הכנה :</label>
+            <input
+              name="preparationTime"
+              value={recipe.preparationTime}
+              onChange={handleInputChange}
+              type="number"
+              className="w-full border-2 border-black p-2 rounded"
+            />
+          </div>
+
+          {/* Cooking Time */}
+          <div>
+            <label className="block mb-2">זמן בישול :</label>
+            <input
+              name="cookingTime"
+              value={recipe.cookingTime}
+              onChange={handleInputChange}
+              type="number"
+              className="w-full border-2 border-black p-2 rounded"
+            />
+          </div>
+
+          {/* Servings */}
+          <div>
+            <label className="block mb-2">כמות מנות :</label>
+            <input
+              name="servings"
+              value={recipe.servings}
+              onChange={handleInputChange}
+              type="number"
+              className="w-full border-2 border-black p-2 rounded"
+            />
+          </div>
+
+          {/* Image URL */}
+          <div>
+            <label className="block mb-2">תמונה :</label>
+            <input
+              name="imageUrl"
+              value={recipe.imageUrl}
+              onChange={handleInputChange}
+              type="text"
+              className="w-full border-2 border-black p-2 rounded"
+            />
+          </div>
+
+          {/* Difficulty */}
+          <div>
+            <label className="block mb-2">רמת קושי :</label>
+            <select
+              name="difficulty"
+              onChange={handleInputChange}
+              value={recipe.difficulty}
+              className="w-full border-2 border-black p-2 rounded"
+            >
+              <option value="">בחר רמת קושי</option>
+              <option value="Easy">קל</option>
+              <option value="Medium">בינוני</option>
+              <option value="Hard">קשה</option>
+            </select>
           </div>
         </div>
-        <div className=" flex justify-center mt-10">
+
+        {/* Update Button */}
+        <div className="flex justify-center mt-8">
           <button
             onClick={handleEditRecipe}
-            className="bg-gray-300 text-lg text-yellow-800 font-bold p-3 w-40 rounded-xl hover:bg-black hover:text-yellow-400"
+            className="bg-gray-300 text-lg text-yellow-800 font-bold p-3 w-40 rounded-xl hover:bg-black hover:text-yellow-400 transition-colors duration-300"
           >
             סיימתי, עדכן
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
