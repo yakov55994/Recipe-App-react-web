@@ -8,7 +8,7 @@ const SearchService = {
             const recipes = await Recipe.find({
                 $or: [
                     { title: { $regex: query, $options: 'i' } },
-                    { description: { $regex: query, $options: 'i' } }  // אם אתה רוצה לחפש גם בתיאור
+                    // { description: { $regex: query, $options: 'i' } }
                 ]
             });
             return recipes; // מחזיר את התוצאות
