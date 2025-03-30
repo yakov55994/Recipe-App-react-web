@@ -7,26 +7,48 @@ import { Home, User, Briefcase, FileText, Heart } from "lucide-react";
 // import { GiCookingPot } from "react-icons/gi";
 import Search from "./Search/Search.jsx";
 import NavBar from "../components/ui/navbar.jsx";
-import { FaUtensils  } from 'react-icons/fa'
+import { FaUtensils } from 'react-icons/fa';
 import AuroraBackgroundDemo from "../components/ui/background/BackgroundView.jsx";
 
 export default function NavBarDemo() {
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [dropdownTimeout, setDropdownTimeout] = useState(null); 
+  const [dropdownTimeout, setDropdownTimeout] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+  const navbarRef = useRef(null);
 
   // עדכון isLoggedIn על פי ה-user
   const isLoggedIn = !!user; // אם יש משתמש, אז הוא מחובר
 
+  // Add scroll event listener to handle navbar visibility on mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if user has scrolled down
+      const scrollPosition = window.scrollY;
+      if (scrollPosition > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   
   const navItems = [
     { name: "דף הבית", url: "/", icon: Home },
     { name: "כל המתכונים", url: "/AllRecipes", icon: Briefcase },
     // תמיד מציגים את קישור "יצירת מתכון"
-    { name: "יצירת מתכון", url: "/CreateRecipe", icon: FaUtensils   },
+    { name: "יצירת מתכון", url: "/CreateRecipe", icon: FaUtensils },
   ];
 
   const LogOut = () => {
@@ -60,7 +82,6 @@ export default function NavBarDemo() {
     setIsDropdownOpen(false);
   };
   
-
   const userDropdown = (
     <div
       className="relative inline-block"
@@ -84,7 +105,7 @@ export default function NavBarDemo() {
 
       {isDropdownOpen && user && (
         <div
-          className="absolute mt-2 w-56  bg-white border border-gray-200 rounded-l-full shadow-lg "
+          className="absolute mt-2 w-56 bg-white border border-gray-200 rounded-l-full shadow-lg"
           onMouseEnter={handleMouseEnter} 
           onMouseLeave={handleMouseLeave} 
         >
@@ -105,7 +126,7 @@ export default function NavBarDemo() {
 
           <button
             onClick={() => setShowLogoutConfirmation(true)}
-            className="block  font-bold px-4 py-2 text-red-600 hover:bg-gray-700  rounded-l-full w-35 cursor-pointer"
+            className="block font-bold px-4 py-2 text-red-600 hover:bg-gray-700 hover:text-white rounded-l-full w-35 cursor-pointer"
           >
             <RiLogoutBoxRFill className="inline size-5 mr-2" /> התנתקות
           </button>
@@ -114,27 +135,32 @@ export default function NavBarDemo() {
     </div>
   );
 
+  // Apply fixed position class to the navbar container
+  const navbarClasses = `sticky top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : ''}`;
+
   return (
     <>
-          {/* <AuroraBackgroundDemo/> */}
-      <NavBar items={navItems} userDropdown={userDropdown} handleLinkClick={handleLinkClick} />
-      <Search />
+      {/* <AuroraBackgroundDemo/> */}
+      <div className={navbarClasses} ref={navbarRef}>
+        <NavBar items={navItems} userDropdown={userDropdown} handleLinkClick={handleLinkClick} />
+        <Search />
+      </div>
       {showLogoutConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className=" bg-white p-6 rounded-md shadow-lg w-80 rtl">
+          <div className="bg-white p-6 rounded-md shadow-lg w-80 rtl">
             <h3 className="text-lg font-bold text-center">
               האם אתה בטוח שברצונך להתנתק?
             </h3>
             <div className="flex justify-center mt-4">
               <button
                 onClick={LogOut}
-                className="bg-red-600 text-white px-4 py-2 rounded-md "
+                className="bg-red-600 text-white px-4 py-2 rounded-md mr-2"
               >
                 כן
               </button>
               <button
                 onClick={() => setShowLogoutConfirmation(false)}
-                className="bg-gray-300 text-black px-4 py-2 rounded-md"
+                className="bg-gray-300 text-black px-4 py-2 rounded-md ml-2"
               >
                 לא
               </button>
