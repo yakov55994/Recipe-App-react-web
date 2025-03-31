@@ -69,7 +69,7 @@ const RecipeCard = ({ mainCategory, initialRecipes }) => {
   const handleRecipeLike = useCallback(
     async (recipe) => {
       if (!userId) {
-        toast.error("User is not logged in");
+        toast.info("צריך להתחבר כדי להוסיף לרשימה");
         return;
       }
 
