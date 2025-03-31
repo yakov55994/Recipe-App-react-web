@@ -105,20 +105,20 @@ export default function NavBarDemo() {
 
       {isDropdownOpen && user && (
         <div
-          className="absolute mt-2 w-56 bg-white border border-gray-200 rounded-l-full shadow-lg"
+          className="sm:absolute sm:mt-5 sm:ml-44 sm:w-41 sm:text-sm bg-white border border-gray-200 rounded-l-full shadow-lg lg:w-48"
           onMouseEnter={handleMouseEnter} 
           onMouseLeave={handleMouseLeave} 
         >
           <Link
             to="/PersonalArea"
-            className="block px-4 py-2 text-black hover:bg-gray-700 font-bold rounded-l-full w-45 hover:text-white"
+            className="block px-4 py-2 text-black hover:bg-gray-700 font-bold rounded-l-full w-45 hover:text-white lg:w-36"
             onClick={() => handleLinkClick("/PersonalArea")} 
           >
             <FileText className="inline size-5 mr-2 " /> איזור אישי
           </Link>
           <Link
             to="/productsIliked"
-            className="block px-4 py-2 text-black hover:bg-gray-700 font-bold rounded-l-full w-50 hover:text-white "
+            className="block px-4 py-2 text-black hover:bg-gray-700 font-bold rounded-l-full w-50 hover:text-white lg:w-44"
             onClick={() => handleLinkClick("/productsIliked")} 
           >
             <Heart className="inline size-5 mr-2 " /> מתכונים שאהבתי
@@ -154,13 +154,13 @@ export default function NavBarDemo() {
             <div className="flex justify-center mt-4">
               <button
                 onClick={LogOut}
-                className="bg-red-600 text-white px-4 py-2 rounded-md mr-2"
+                className="bg-red-600 text-white px-4 py-2 rounded-md mr-2 cursor-pointer"
               >
                 כן
               </button>
               <button
                 onClick={() => setShowLogoutConfirmation(false)}
-                className="bg-gray-300 text-black px-4 py-2 rounded-md ml-2"
+                className="bg-gray-300 text-black px-4 py-2 rounded-md ml-4 mr-4 cursor-pointer"
               >
                 לא
               </button>
