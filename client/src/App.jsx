@@ -63,66 +63,14 @@ export default function App() {
             <Route path="/editRecipe/:recipeId" element={<EditRecipe />} />
           </Routes>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              color: "#F5DEB3",
-              marginTop: "200px",
-            }}
-          >
-            <b
-              style={{
-                color: "ActiveBorder",
-                // backgroundColor: "#61402cc5",
-                padding: "0.5rem",
-                borderRadius: "5px",
-              }}
-            >
-              נבנה ועוצב ע"י{" "}
-              <a
-                href="https://mmmtweb2.github.io/MT/index.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: "ActiveBorder",
-                  textShadow: "1px 1px 1px rgba(204, 231, 107, 0.395)",
-                  fontSize: "20px",
-                  textDecoration: "underline",
-                }}
-                
-              >
-                Made Tomorrow
-              </a>{" "}
-              {/* <a
-                href="/index.html"
-                style={{
-                  color: "ActiveBorder",
-                  textShadow: "1px 1px 1px rgba(204, 231, 107, 0.395)",
-                }}
-              >
-                צור קשר
-              </a> */}
-            </b>
+          <div className="flex justify-center">
+            <p className=" font-mono">כל הזכויות שמורות © 2025 Food-Recipes</p>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              color: "ActiveBorder",
-            }}
-          >
-            <p
-              style={{
-                marginTop: "4px",
-                marginBottom: "20px",
-                // backgroundColor: "#61402cc5",
-                padding: "0.5rem",
-                borderRadius: "5px",
-              }}
-            >
-              &copy; 2025 Made Tomorrow. כל הזכויות שמורות.
+          <div className="flex justify-center">
+            <p className="">
+              {" "}
+              נבנה על ידי <strong className="text-blue-500"><a href="https://yc-dev.pages.dev/">Yakov Cohen</a></strong>
             </p>
           </div>
         </BrowserRouter>
